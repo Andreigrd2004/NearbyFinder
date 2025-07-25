@@ -1,7 +1,7 @@
-package com.java_app.demo.Country;
+package com.java_app.demo.country;
 
-import com.java_app.demo.Currency.Currency;
-import com.java_app.demo.User.CustomUser;
+import com.java_app.demo.currency.Currency;
+import com.java_app.demo.user.CustomUser;
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;

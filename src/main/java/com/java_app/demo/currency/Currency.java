@@ -1,6 +1,6 @@
-package com.java_app.demo.Currency;
+package com.java_app.demo.currency;
 
-import com.java_app.demo.Country.Country;
+import com.java_app.demo.country.Country;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

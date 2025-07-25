@@ -1,7 +1,7 @@
-package com.java_app.demo.User;
+package com.java_app.demo.user;
 
-import com.java_app.demo.ApiKey.ApiKey;
-import com.java_app.demo.Country.Country;
+import com.java_app.demo.apikey.ApiKey;
+import com.java_app.demo.country.Country;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
