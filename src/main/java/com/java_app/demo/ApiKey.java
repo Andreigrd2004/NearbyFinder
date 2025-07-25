@@ -1,11 +1,19 @@
 package com.java_app.demo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 
 @Entity(name="API_key")
 @Table(name = "API_key")
-public class API_key {
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class ApiKey {
 
     @Id
     @SequenceGenerator(
@@ -18,14 +26,14 @@ public class API_key {
             generator = "API_sequence"
     )
     private String value;
+
     private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private CustomUser customUser;
 
-    public API_key() {
 
-    }
 
     @Override
     public String toString() {
@@ -35,8 +43,4 @@ public class API_key {
                 '}';
     }
 
-    public API_key(String value, String name) {
-        this.value = value;
-        this.name = name;
-    }
 }

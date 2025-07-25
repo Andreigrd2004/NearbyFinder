@@ -32,7 +32,7 @@ public class CustomUser implements UserDetails {
     private Boolean accountNonExpired;
 
     @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<API_key> api_keySet = new HashSet<>();
+    private Set<ApiKey> api_keySet = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
