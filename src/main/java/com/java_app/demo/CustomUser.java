@@ -34,6 +34,14 @@ public class CustomUser implements UserDetails {
     @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<API_key> api_keySet = new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "associated_country",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "country_id")
+    )
+    private Set<Country> associatedCountries = new HashSet<>();
+
     public CustomUser() {
 
     }

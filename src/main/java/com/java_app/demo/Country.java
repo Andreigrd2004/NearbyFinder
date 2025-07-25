@@ -22,6 +22,9 @@ public class Country {
     @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Currency> currencies = new HashSet<>();
 
+    @ManyToMany(mappedBy = "associatedCountries")
+    Set<CustomUser>  associatedCustomUsers = new HashSet<>();
+
     public Country() {
     }
 
