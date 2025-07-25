@@ -1,9 +1,17 @@
 package com.java_app.demo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name = "Currency")
+@Table(name = "currency", schema = "nearby_finder")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Currency {
     @Id
     @SequenceGenerator(
@@ -21,27 +29,6 @@ public class Currency {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "country_id")
     private Country country;
-
-    public Currency() {
-    }
-
-    public Currency(Integer id, String name, Integer amount) {
-        this.id = id;
-        this.name = name;
-        this.amount = amount;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
 
 
 }
