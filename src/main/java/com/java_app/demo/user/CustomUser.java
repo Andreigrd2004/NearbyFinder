@@ -24,13 +24,10 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomUser implements UserDetails {
-    
-    @SequenceGenerator(name = "user_sequence", sequenceName = "user_sequence", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_sequence")
+
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
-        
-    private Collection<? extends GrantedAuthority> authorities;
 
     private String email;
 
@@ -45,7 +42,7 @@ public class CustomUser implements UserDetails {
     private Boolean accountNonExpired;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), schema="nearby_finder")
     @Column(name = "role_name")
     private Set<String> roles = new HashSet<>();
 
@@ -73,7 +70,6 @@ public class CustomUser implements UserDetails {
         this.accountNonExpired=true;
         this.accountNonLocked=true;
         this.credentialsNonExpired=true;
-        this.authorities=authorities;
     }
 
     public void eraseCredentials(){

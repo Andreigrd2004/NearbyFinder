@@ -4,4 +4,4 @@ CREATE TABLE user_roles (
                             PRIMARY KEY (user_id, role_name)
 );
 
-ALTER TABLE "user_roles" ADD FOREIGN KEY ("user_id") REFERENCES custom_user(id)
+ALTER TABLE "user_roles" ADD FOREIGN KEY ("user_id") REFERENCES nearby_finder.custom_user(id)
