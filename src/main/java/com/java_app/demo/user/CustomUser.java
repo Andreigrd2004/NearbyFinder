@@ -8,11 +8,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity()
 @Table(name = "custom_user", schema = "nearby_finder")
@@ -40,6 +43,11 @@ public class CustomUser implements UserDetails {
     private Boolean enabled;
 
     private Boolean accountNonExpired;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role_name")
+    private Set<String> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "customUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ApiKey> api_keySet = new HashSet<>();
@@ -72,4 +80,10 @@ public class CustomUser implements UserDetails {
         this.password=null;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(roleString -> new SimpleGrantedAuthority("ROLE_" + roleString)) // Aici transformi String-ul
+                .collect(Collectors.toList());
+    }
 }
