@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeyDto {
-    private String value;
-    private String name;
+  private String value;
+  private String name;
 }
