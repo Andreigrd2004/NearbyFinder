@@ -29,8 +29,8 @@ public class KeyController {
         return keyService.delete(keyName);
     }
 
-    @PutMapping("/modify")
-    public ResponseEntity<String> modifyKey(@RequestParam String keyName, String newName){
+    @PutMapping("/update")
+    public ResponseEntity<String> updateKey(@RequestParam String keyName, String newName){
         return keyService.update(keyName, newName);
     }
 }

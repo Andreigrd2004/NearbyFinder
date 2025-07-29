@@ -8,8 +8,8 @@ import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.apikey.model.KeyMapper;
 import com.java_app.demo.user.CustomUser;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,12 +40,11 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   public ResponseEntity<List<KeyDto>> getCurrentUserApiKeys() {
-    List<ApiKey> keys = keysRepository.findByCustomUser(getAuthenticatedUser());
-    List<KeyDto> keyDtos = new ArrayList<>();
-    for (ApiKey k : keys) {
-      keyDtos.add(KeyMapper.INSTANCE.apiKeyToKeyDto(k));
-    }
-    return new ResponseEntity<>(keyDtos, HttpStatus.OK);
+    return new ResponseEntity<>(
+        keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
+            .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
+            .collect(Collectors.toList()),
+            HttpStatus.OK);
   }
 
   @Override
