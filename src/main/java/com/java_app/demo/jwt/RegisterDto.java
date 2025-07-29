@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Component
 public class RegisterDto {
-    private String email;
+  private String email;
 
-    private String displayName;
+  private String displayName;
 
-    private String password;
+  private String password;
 
-    private String username;
+  private String username;
 }
