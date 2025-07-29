@@ -1,13 +1,13 @@
 CREATE TABLE "custom_user" (
-  "id" integer PRIMARY KEY,
+  "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "email" varchar,
   "password" varchar,
   "username" varchar,
-  "displayName" varchar,
+  "display_name" varchar,
   "enabled" Boolean,
-  "accountNonExpired" Boolean,
-  "accountNonLocked" Boolean,
-  "credentialsNonExpired" Boolean
+  "account_non_expired" Boolean,
+  "account_non_locked" Boolean,
+  "credentials_non_expired" Boolean
 );
 
 CREATE TABLE "api_key" (
