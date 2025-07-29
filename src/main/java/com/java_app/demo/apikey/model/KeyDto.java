@@ -1,17 +1,15 @@
-package com.java_app.demo.jwt;
+package com.java_app.demo.apikey.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
-public class LoginDto {
-  private String Username;
-  private String password;
+public class KeyDto {
+    private String value;
+    private String name;
 }

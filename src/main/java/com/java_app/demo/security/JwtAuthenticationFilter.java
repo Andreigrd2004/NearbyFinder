@@ -1,6 +1,6 @@
 package com.java_app.demo.security;
 
-import com.java_app.demo.jwt.JwtTokenProvider;
+import com.java_app.demo.security.jwt.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
