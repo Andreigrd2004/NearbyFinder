@@ -31,5 +31,4 @@ public class ApiKey {
   public String toString() {
     return "API_key{" + "value='" + value + '\'' + ", name='" + name + '\'' + '}';
   }
-
 }

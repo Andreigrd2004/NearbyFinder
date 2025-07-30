@@ -9,5 +9,4 @@ public interface KeyMapper {
   KeyMapper INSTANCE = Mappers.getMapper(KeyMapper.class);
 
   KeyDto apiKeyToKeyDto(ApiKey key);
-
 }

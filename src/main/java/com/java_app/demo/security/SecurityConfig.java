@@ -2,6 +2,7 @@ package com.java_app.demo.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.java_app.demo.security.apikey.ApiKeyFilter;
 import com.java_app.demo.security.jwt.JwtAuthenticationEntryPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,8 @@ public class SecurityConfig {
 
   private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+  private ApiKeyFilter apiKeyFilter;
+
   @Bean
   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
     http.csrf(AbstractHttpConfigurer::disable);
@@ -32,16 +35,21 @@ public class SecurityConfig {
     http.logout(withDefaults());
     http.authorizeHttpRequests(
         authorizeRequests ->
-                authorizeRequests
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                        .anyRequest()
-                        .authenticated());
+            authorizeRequests
+                .requestMatchers("/api/auth/**")
+                .permitAll()
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
+                .permitAll()
+                    .requestMatchers("/api/keys/**", "/get/**")
+                .hasRole("API")
+                .anyRequest()
+                .authenticated());
 
     http.exceptionHandling(
-            exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+        exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
     http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    http.addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }

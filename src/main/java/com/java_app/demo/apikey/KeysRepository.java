@@ -11,16 +11,17 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KeysRepository extends JpaRepository<ApiKey, String> {
-    List<ApiKey> findByCustomUser(CustomUser customUser);
+  List<ApiKey> findByCustomUser(CustomUser customUser);
 
-    boolean existsByName(String name);
+  boolean existsByName(String name);
 
-    boolean existsByNameAndCustomUser(String name, CustomUser customUser);
+  boolean existsByNameAndCustomUser(String name, CustomUser customUser);
 
-    void deleteByName(String name);
+  void deleteByName(String name);
 
-    @Modifying
-    @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
-    void updateApiKey(@Param("name")String apiKeyName, @Param("newName")String newName);
+  boolean existsByValue(String value);
 
+  @Modifying
+  @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
+  void updateApiKey(@Param("name") String apiKeyName, @Param("newName") String newName);
 }
