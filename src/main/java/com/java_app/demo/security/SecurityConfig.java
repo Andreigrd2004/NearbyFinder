@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
                 .permitAll()
-                    .requestMatchers("/api/keys/**", "/get/**")
+                    .requestMatchers("/user/**")
                 .hasRole("API")
                 .anyRequest()
                 .authenticated());
