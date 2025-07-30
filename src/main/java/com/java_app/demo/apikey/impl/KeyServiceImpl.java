@@ -44,7 +44,7 @@ public class KeyServiceImpl implements KeyService {
         keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
             .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
             .collect(Collectors.toList()),
-            HttpStatus.OK);
+        HttpStatus.OK);
   }
 
   @Override
