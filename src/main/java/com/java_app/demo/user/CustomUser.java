@@ -65,10 +65,14 @@ public class CustomUser implements UserDetails {
     this.password = null;
   }
 
+  public void addRole(String role) {
+    this.roles.add(role);
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles.stream()
-        .map(roleString -> new SimpleGrantedAuthority("ROLE_" + roleString))
+        .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }
 }
