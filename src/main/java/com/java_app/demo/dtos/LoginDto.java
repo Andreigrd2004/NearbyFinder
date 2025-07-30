@@ -1,4 +1,4 @@
-package com.java_app.demo.jwt;
+package com.java_app.demo.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,15 +8,10 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Component
-public class RegisterDto {
-  private String email;
-
-  private String displayName;
-
+public class LoginDto {
+  private String Username;
   private String password;
-
-  private String username;
 }

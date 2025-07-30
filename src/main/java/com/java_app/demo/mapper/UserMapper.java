@@ -1,6 +1,6 @@
 package com.java_app.demo.mapper;
 
-import com.java_app.demo.jwt.RegisterDto;
+import com.java_app.demo.dtos.RegisterDto;
 import com.java_app.demo.user.CustomUser;
 import java.util.Collections;
 import org.springframework.security.crypto.password.PasswordEncoder;

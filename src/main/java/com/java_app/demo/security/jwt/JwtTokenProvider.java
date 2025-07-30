@@ -1,4 +1,4 @@
-package com.java_app.demo.jwt;
+package com.java_app.demo.security.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

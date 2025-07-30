@@ -2,7 +2,7 @@ package com.java_app.demo.security;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-import com.java_app.demo.jwt.JwtAuthenticationEntryPoint;
+import com.java_app.demo.security.jwt.JwtAuthenticationEntryPoint;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

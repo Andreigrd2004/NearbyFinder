@@ -1,6 +1,6 @@
 package com.java_app.demo.user;
 
-import com.java_app.demo.apikey.ApiKey;
+import com.java_app.demo.apikey.model.ApiKey;
 import com.java_app.demo.country.Country;
 import jakarta.persistence.*;
 import java.util.Collection;

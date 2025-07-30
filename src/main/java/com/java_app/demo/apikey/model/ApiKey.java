@@ -1,4 +1,4 @@
-package com.java_app.demo.apikey;
+package com.java_app.demo.apikey.model;
 
 import com.java_app.demo.user.CustomUser;
 import jakarta.persistence.*;
@@ -16,8 +16,9 @@ import lombok.Setter;
 public class ApiKey {
 
   @Id
-  @SequenceGenerator(name = "API_sequence", sequenceName = "API_sequence", allocationSize = 1)
-  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "API_sequence")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
+
   private String value;
 
   private String name;
@@ -30,4 +31,5 @@ public class ApiKey {
   public String toString() {
     return "API_key{" + "value='" + value + '\'' + ", name='" + name + '\'' + '}';
   }
+
 }

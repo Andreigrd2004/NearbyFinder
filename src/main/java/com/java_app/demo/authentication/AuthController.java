@@ -1,9 +1,8 @@
-package com.java_app.demo.controller;
+package com.java_app.demo.authentication;
 
-import com.java_app.demo.jwt.AuthService;
-import com.java_app.demo.jwt.JwtAuthResponse;
-import com.java_app.demo.jwt.LoginDto;
-import com.java_app.demo.jwt.RegisterDto;
+import com.java_app.demo.dtos.LoginDto;
+import com.java_app.demo.dtos.RegisterDto;
+import com.java_app.demo.security.jwt.JwtAuthResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,16 +12,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
   AuthService authService;
-
-  @PostMapping("/login")
+  
+  @PostMapping("/auth/login")
   public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDto loginDto) {
     return authService.login(loginDto);
   }
 
-  @PostMapping("/register")
+  @PostMapping("/auth/register")
   public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
     return authService.register(registerDto);
   }

@@ -1,4 +1,4 @@
-package com.java_app.demo.jwt;
+package com.java_app.demo.security.jwt;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
