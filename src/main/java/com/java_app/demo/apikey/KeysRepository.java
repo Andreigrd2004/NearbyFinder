@@ -17,9 +17,21 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
 
   boolean existsByNameAndCustomUser(String name, CustomUser customUser);
 
+  boolean existsById(Integer id);
+
   void deleteByName(String name);
 
+  void deleteApiKeyById(Integer id);
+
   boolean existsByValue(String value);
+
+  @Modifying
+  @Query(value = "DELETE FROM nearby_finder.api_key a WHERE a.user_id=:id", nativeQuery = true)
+  void deleteById(@Param("id") Integer id);
+
+  List<ApiKey> findAllByCustomUser(CustomUser customUser);
+
+  ApiKey findApiKeyById(Integer id);
 
   @Modifying
   @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")

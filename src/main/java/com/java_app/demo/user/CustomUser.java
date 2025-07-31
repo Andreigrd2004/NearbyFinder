@@ -27,6 +27,7 @@ public class CustomUser implements UserDetails {
   @Id
   private Integer id;
 
+  @Column(unique = true)
   private String email;
 
   private String displayName;
@@ -53,6 +54,7 @@ public class CustomUser implements UserDetails {
   @ManyToMany
   @JoinTable(
       name = "user_country",
+      schema = "nearby_finder",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "country_id"))
   private Set<Country> associatedCountries = new HashSet<>();

@@ -1,11 +1,13 @@
-package com.java_app.demo.mapper;
+package com.java_app.demo.user.mapper;
 
-import com.java_app.demo.dtos.RegisterDto;
-import com.java_app.demo.user.CustomUser;
+import com.java_app.demo.user.dtos.RegisterDto;
+
 import java.util.Collections;
+
+import com.java_app.demo.user.CustomUser;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class UserMapper {
+public class RegisterMapper {
 
   public static CustomUser map(RegisterDto registerDto, PasswordEncoder passwordEncoder) {
 

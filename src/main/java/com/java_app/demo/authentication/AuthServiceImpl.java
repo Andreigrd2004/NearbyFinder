@@ -1,8 +1,8 @@
 package com.java_app.demo.authentication;
 
-import com.java_app.demo.dtos.LoginDto;
-import com.java_app.demo.dtos.RegisterDto;
-import com.java_app.demo.mapper.UserMapper;
+import com.java_app.demo.user.dtos.LoginDto;
+import com.java_app.demo.user.dtos.RegisterDto;
+import com.java_app.demo.user.mapper.RegisterMapper;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
 import com.java_app.demo.security.jwt.JwtTokenProvider;
 import com.java_app.demo.user.CustomUser;
@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
       return new ResponseEntity<>("Username is already taken", HttpStatus.BAD_REQUEST);
     }
-    CustomUser user = UserMapper.map(registerDto, passwordEncoder);
+    CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);
 
     userRepository.save(user);
     return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
