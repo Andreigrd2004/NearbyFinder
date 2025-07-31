@@ -21,11 +21,11 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
 
   void deleteByName(String name);
 
+  void deleteByCustomUserId(Integer customUserId);
+
   boolean existsByValue(String value);
 
-  @Modifying
-  @Query(value = "DELETE FROM nearby_finder.api_key a WHERE a.user_id=:id", nativeQuery = true)
-  void deleteById(@Param("id") Integer id);
+  void deleteApiKeyById(Integer id);
 
   List<ApiKey> findAllByCustomUser(CustomUser customUser);
 
@@ -35,5 +35,5 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
   @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
   void updateApiKey(@Param("name") String apiKeyName, @Param("newName") String newName);
 
-  boolean existsApiKeyByCustomUser_Id(Integer id);
+  boolean existsApiKeyByCustomUser_Id(Integer userId);
 }

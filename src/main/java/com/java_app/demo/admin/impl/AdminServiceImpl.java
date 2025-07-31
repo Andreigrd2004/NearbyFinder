@@ -61,7 +61,7 @@ public class AdminServiceImpl implements AdminService {
   public ResponseEntity<String> deleteUserAsAdmin(Integer id) {
     if (userRepository.existsById(id)) {
       userRepository.deleteCustomUserById(id);
-      keysRepository.deleteById(id);
+      keysRepository.deleteByCustomUserId(id);
       log.info("The Admin deleted the user with the following id: {}", id);
       return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -88,7 +88,7 @@ public class AdminServiceImpl implements AdminService {
   @Transactional
   public ResponseEntity<String> deleteKeyAsAdmin(Integer id) {
     if (keysRepository.existsById(id)) {
-      keysRepository.deleteById(id);
+      keysRepository.deleteApiKeyById(id);
       log.info("The Admin deleted the Apikey with the following id: {}", id);
       return new ResponseEntity<>(HttpStatus.OK);
     }
