@@ -18,36 +18,38 @@ public class AdminController {
 
   @GetMapping("/users")
   public ResponseEntity<List<UserDto>> getUsers() {
-    return adminService.getAllUsersFromDatabe();
+    return adminService.getAllUsers();
   }
 
   @PostMapping("/users")
   public ResponseEntity<String> addUser(RegisterDto registerDto) {
-      return authService.register(registerDto);
+    return authService.register(registerDto);
   }
 
   @PutMapping("/users")
-  public ResponseEntity<String> updateUser(@RequestParam(required = false) String userEmail, @RequestParam(required = false) String userRole) {
+  public ResponseEntity<String> updateUser(
+      @RequestParam String userEmail, @RequestParam String userRole) {
     return adminService.updateUserAsAdmin(userEmail, userRole);
   }
 
   @DeleteMapping("/users")
-  public ResponseEntity<String> deleteUser(@RequestParam int id) {
-    return adminService.deleteUserAsAdmin(id);
+  public ResponseEntity<String> deleteUser(@RequestParam Integer user_id) {
+    return adminService.deleteUserAsAdmin(user_id);
   }
 
-  @GetMapping("/api/keys")
+  @GetMapping("/keys")
   public ResponseEntity<List<KeyDto>> getKeys(@RequestParam Integer user_id) {
-    return adminService.getAllUserKeysFromDatabe(user_id);
+    return adminService.getAllUserKeys(user_id);
   }
 
-  @DeleteMapping("/api/keys")
-  public ResponseEntity<String> deleteKey(@RequestParam Integer id) {
-    return adminService.deleteKeyAsAdmin(id);
+  @DeleteMapping("/keys")
+  public ResponseEntity<String> deleteKey(@RequestParam Integer key_id) {
+    return adminService.deleteKeyAsAdmin(key_id);
   }
 
-  @PutMapping("/api/keys")
-  public ResponseEntity<String> updateKey(@RequestParam Integer id, @RequestParam String name) {
-    return adminService.updateUserKey(id, name);
+  @PutMapping("/keys")
+  public ResponseEntity<String> updateKey(
+      @RequestParam Integer key_id, @RequestParam String name, @RequestParam Integer user_id) {
+    return adminService.updateUserKey(key_id, name, user_id);
   }
 }

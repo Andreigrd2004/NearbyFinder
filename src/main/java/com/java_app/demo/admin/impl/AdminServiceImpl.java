@@ -26,7 +26,7 @@ public class AdminServiceImpl implements AdminService {
   private final KeysRepository keysRepository;
 
   @Override
-  public ResponseEntity<List<UserDto>> getAllUsersFromDatabe() {
+  public ResponseEntity<List<UserDto>> getAllUsers() {
     List<UserDto> users =
         List.of(
             userRepository.getAllUsers().stream()
@@ -39,30 +39,30 @@ public class AdminServiceImpl implements AdminService {
   @Override
   @Transactional
   public ResponseEntity<String> updateUserAsAdmin(String userEmail, String userRole) {
-    if (!userEmail.isEmpty() || !userRole.isEmpty() && userRepository.existsByEmail(userEmail)) {
-      CustomUser user = userRepository.findCustomUserByEmail(userEmail);
-
-      if (!userEmail.isEmpty()) {
-        user.setEmail(userEmail);
-      }
-      if (!userRole.isEmpty()) {
-        user.addRole("ROLE_" + userRole);
-      }
-      userRepository.save(user);
-      log.info("Admin updated this user: {}", user.getUsername() + " with the following email and role: " + userEmail + ", " +  userRole);
-      return new ResponseEntity<>(HttpStatus.OK);
+    if (userEmail.isEmpty() && userRole.isEmpty() && !userRepository.existsByEmail(userEmail)) {
+      log.info(
+          "The Admin tried to update the user with the following email {}, but failed.", userEmail);
+      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-    log.info("The Admin tried to update the user with the following email {}, but failed.", userEmail);
-    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    CustomUser user = userRepository.findCustomUserByEmail(userEmail);
+
+    user.setEmail(userEmail);
+    user.addRole("ROLE_" + userRole);
+    userRepository.save(user);
+
+    log.info(
+        "Admin updated this user: {}",
+        user.getUsername() + " with the following email and role: " + userEmail + ", " + userRole);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> deleteUserAsAdmin(int id) {
+  public ResponseEntity<String> deleteUserAsAdmin(Integer id) {
     if (userRepository.existsById(id)) {
       userRepository.deleteCustomUserById(id);
       keysRepository.deleteById(id);
-        log.info("The Admin deleted the user with the following id: {}", id);
+      log.info("The Admin deleted the user with the following id: {}", id);
       return new ResponseEntity<>(HttpStatus.OK);
     }
     log.info("The Admin tried to delete the user with the following id: {}", id);
@@ -70,18 +70,17 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  public ResponseEntity<List<KeyDto>> getAllUserKeysFromDatabe(Integer userId) {
+  public ResponseEntity<List<KeyDto>> getAllUserKeys(Integer userId) {
     CustomUser user = userRepository.findCustomUserById(userId);
     if (user != null) {
       List<KeyDto> keys =
-          List.of(
-              keysRepository.findAllByCustomUser(user).stream()
-                  .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-                  .toArray(KeyDto[]::new));
-      log.info("Admin retrieved the keys of the user with the following ID: {}", userId + " and received the following result: " + keys);
+          keysRepository.findAllByCustomUser(user).stream()
+              .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
+              .toList();
       return new ResponseEntity<>(keys, HttpStatus.OK);
     }
-    log.info("Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
+    log.info(
+        "Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
@@ -89,7 +88,7 @@ public class AdminServiceImpl implements AdminService {
   @Transactional
   public ResponseEntity<String> deleteKeyAsAdmin(Integer id) {
     if (keysRepository.existsById(id)) {
-      keysRepository.deleteApiKeyById(id);
+      keysRepository.deleteById(id);
       log.info("The Admin deleted the Apikey with the following id: {}", id);
       return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -98,8 +97,8 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  public ResponseEntity<String> updateUserKey(Integer id, String name) {
-    if (keysRepository.existsById(id)) {
+  public ResponseEntity<String> updateUserKey(Integer id, String name, Integer user_id) {
+    if (keysRepository.existsById(id) && keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
       ApiKey key = keysRepository.findApiKeyById(id);
       String oldName = key.getName();
       key.setName(name);
@@ -107,7 +106,9 @@ public class AdminServiceImpl implements AdminService {
       log.info("Admin updated this ApiKey: {}", oldName + " with the following name: " + name);
       return new ResponseEntity<>(HttpStatus.OK);
     }
-    log.info("The Admin tried to update the key with the following {}, but failed because was not found.", name);
+    log.info(
+        "The Admin tried to update the key with the following {}, but failed because was not found.",
+        name);
     return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 }

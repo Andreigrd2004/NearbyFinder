@@ -6,15 +6,15 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface AdminService {
-  ResponseEntity<List<UserDto>> getAllUsersFromDatabe();
+  ResponseEntity<List<UserDto>> getAllUsers();
 
   ResponseEntity<String> updateUserAsAdmin(String userId, String userRole);
 
-  ResponseEntity<String> deleteUserAsAdmin(int id);
+  ResponseEntity<String> deleteUserAsAdmin(Integer id);
 
-  ResponseEntity<List<KeyDto>> getAllUserKeysFromDatabe(Integer userId);
+  ResponseEntity<List<KeyDto>> getAllUserKeys(Integer userId);
 
   ResponseEntity<String> deleteKeyAsAdmin(Integer id);
 
-  ResponseEntity<String> updateUserKey(Integer id, String name);
+  ResponseEntity<String> updateUserKey(Integer id, String name, Integer user_id);
 }

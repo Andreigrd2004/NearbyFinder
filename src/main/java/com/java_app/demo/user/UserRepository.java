@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<CustomUser, Integer> {
-    Optional<CustomUser> findByUsername(String username);
+  Optional<CustomUser> findByUsername(String username);
 
   @Query(value = "SELECT * from nearby_finder.custom_user", nativeQuery = true)
   List<CustomUser> getAllUsers();
@@ -16,8 +16,6 @@ public interface UserRepository extends JpaRepository<CustomUser, Integer> {
   boolean existsByUsername(String username);
 
   boolean existsByEmail(String email);
-
-  boolean existsById(int id);
 
   CustomUser findCustomUserByEmail(String email);
 

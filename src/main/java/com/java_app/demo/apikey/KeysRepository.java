@@ -21,8 +21,6 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
 
   void deleteByName(String name);
 
-  void deleteApiKeyById(Integer id);
-
   boolean existsByValue(String value);
 
   @Modifying
@@ -36,4 +34,6 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
   @Modifying
   @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
   void updateApiKey(@Param("name") String apiKeyName, @Param("newName") String newName);
+
+  boolean existsApiKeyByCustomUser_Id(Integer id);
 }
