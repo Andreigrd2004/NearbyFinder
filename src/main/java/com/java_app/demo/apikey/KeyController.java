@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/keys")
+@RequestMapping("/keys")
 public class KeyController {
 
   private final KeyService keyService;

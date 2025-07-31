@@ -17,11 +17,23 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
 
   boolean existsByNameAndCustomUser(String name, CustomUser customUser);
 
+  boolean existsById(Integer id);
+
   void deleteByName(String name);
 
+  void deleteByCustomUserId(Integer customUserId);
+
   boolean existsByValue(String value);
+
+  void deleteApiKeyById(Integer id);
+
+  List<ApiKey> findAllByCustomUser(CustomUser customUser);
+
+  ApiKey findApiKeyById(Integer id);
 
   @Modifying
   @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
   void updateApiKey(@Param("name") String apiKeyName, @Param("newName") String newName);
+
+  boolean existsApiKeyByCustomUser_Id(Integer userId);
 }

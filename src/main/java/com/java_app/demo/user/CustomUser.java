@@ -27,6 +27,7 @@ public class CustomUser implements UserDetails {
   @Id
   private Integer id;
 
+  @Column(unique = true)
   private String email;
 
   private String displayName;
@@ -53,6 +54,7 @@ public class CustomUser implements UserDetails {
   @ManyToMany
   @JoinTable(
       name = "user_country",
+      schema = "nearby_finder",
       joinColumns = @JoinColumn(name = "user_id"),
       inverseJoinColumns = @JoinColumn(name = "country_id"))
   private Set<Country> associatedCountries = new HashSet<>();
@@ -65,10 +67,14 @@ public class CustomUser implements UserDetails {
     this.password = null;
   }
 
+  public void addRole(String role) {
+    this.roles.add(role);
+  }
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return roles.stream()
-        .map(roleString -> new SimpleGrantedAuthority("ROLE_" + roleString))
+        .map(SimpleGrantedAuthority::new)
         .collect(Collectors.toList());
   }
 }
