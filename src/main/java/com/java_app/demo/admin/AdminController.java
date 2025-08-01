@@ -2,7 +2,7 @@ package com.java_app.demo.admin;
 
 import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.authentication.AuthService;
-import com.java_app.demo.user.dtos.RegisterDto;
+import com.java_app.demo.dtos.RegisterDto;
 import com.java_app.demo.user.dtos.UserDto;
 import java.util.List;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
 package com.java_app.demo.authentication;
 
-import com.java_app.demo.user.dtos.LoginDto;
-import com.java_app.demo.user.dtos.RegisterDto;
-import com.java_app.demo.user.mapper.RegisterMapper;
+import com.java_app.demo.authentication.dtos.LoginDto;
+import com.java_app.demo.authentication.dtos.RegisterDto;
+import com.java_app.demo.mapper.UserMapper;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
 import com.java_app.demo.security.jwt.JwtTokenProvider;
 import com.java_app.demo.user.CustomUser;

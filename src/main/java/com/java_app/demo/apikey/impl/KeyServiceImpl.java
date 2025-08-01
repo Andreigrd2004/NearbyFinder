@@ -68,7 +68,7 @@ public class KeyServiceImpl implements KeyService {
     return new ResponseEntity<>("Key Not Found!", HttpStatus.NOT_FOUND);
   }
 
-  private CustomUser getAuthenticatedUser() {
+  public CustomUser getAuthenticatedUser() {
     return (CustomUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
   }
 

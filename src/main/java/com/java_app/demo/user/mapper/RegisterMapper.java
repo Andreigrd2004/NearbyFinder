@@ -1,7 +1,7 @@
 package com.java_app.demo.user.mapper;
 
-import com.java_app.demo.user.dtos.RegisterDto;
-
+import com.java_app.demo.authentication.dtos.RegisterDto;
+import com.java_app.demo.user.CustomUser;
 import java.util.Collections;
 
 import com.java_app.demo.user.CustomUser;

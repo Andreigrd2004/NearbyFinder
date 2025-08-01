@@ -1,4 +1,4 @@
-package com.java_app.demo.user.dtos;
+package com.java_app.demo.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,14 +7,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class RegisterDto {
-  private String email;
-
-  private String displayName;
-
+@AllArgsConstructor
+public class LoginDto {
+  private String Username;
   private String password;
-
-  private String username;
 }
