@@ -4,7 +4,6 @@ import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.CustomUser;
 import java.util.Collections;
 
-import com.java_app.demo.user.CustomUser;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class RegisterMapper {
