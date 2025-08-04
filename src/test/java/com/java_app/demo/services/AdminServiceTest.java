@@ -32,14 +32,14 @@ public class AdminServiceTest {
 
   @Test
   void checkIfRetrievesAllUsers() {
-    List<CustomUser> dbUsers = new ArrayList<CustomUser>();
+    List<CustomUser> dbUsers = new ArrayList<>();
     dbUsers.add(new CustomUser());
     dbUsers.getFirst().setId(1);
     dbUsers.getFirst().setEmail("awd");
     dbUsers.getFirst().setUsername("wadwa");
     dbUsers.getFirst().setEnabled(true);
     dbUsers.getFirst().setAccountNonLocked(true);
-    dbUsers.getFirst().setRoles(new HashSet<String>(Collections.singleton("ROLE_USER")));
+    dbUsers.getFirst().setRoles(new HashSet<>(Collections.singleton("ROLE_USER")));
     List<UserDto> users = dbUsers.stream().map(UserMapper.INSTANCE::UserToUserDto).toList();
     when(userRepository.getAllUsers()).thenReturn(dbUsers);
 
@@ -56,7 +56,7 @@ public class AdminServiceTest {
     String role = "ADMIN";
     CustomUser customUser = new CustomUser();
     customUser.setEmail(email);
-    customUser.setRoles(new HashSet<String>(Collections.singleton(role)));
+    customUser.setRoles(new HashSet<>(Collections.singleton(role)));
     when(userRepository.findCustomUserByEmail(email)).thenReturn(customUser);
 
     ResponseEntity<String> response = adminService.updateUserAsAdmin(email, role);
@@ -72,7 +72,7 @@ public class AdminServiceTest {
     String role = "";
     CustomUser customUser = new CustomUser();
     customUser.setEmail(email);
-    customUser.setRoles(new HashSet<String>(Collections.singleton(role)));
+    customUser.setRoles(new HashSet<>(Collections.singleton(role)));
     when(userRepository.existsByEmail(email)).thenReturn(false);
 
     ResponseEntity<String> response = adminService.updateUserAsAdmin(email, role);
@@ -86,7 +86,7 @@ public class AdminServiceTest {
     Integer id = 1;
     CustomUser customUser = new CustomUser();
     customUser.setId(id);
-    Set<ApiKey> keys = new HashSet<ApiKey>();
+    Set<ApiKey> keys = new HashSet<>();
     ApiKey apiKey1 = new ApiKey();
     ApiKey apiKey2 = new ApiKey();
     ApiKey apiKey3 = new ApiKey();

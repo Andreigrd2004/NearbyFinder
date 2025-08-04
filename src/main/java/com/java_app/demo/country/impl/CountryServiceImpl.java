@@ -21,7 +21,7 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  public ResponseEntity<?> getUserLocationByIp(String ip) {
+  public ResponseEntity<LocationDto> getUserLocationByIp(String ip) {
     if (!validator.isValid(ip)) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

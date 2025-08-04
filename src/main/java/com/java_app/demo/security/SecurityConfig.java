@@ -4,6 +4,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import com.java_app.demo.security.apikey.ApiKeyFilter;
 import com.java_app.demo.security.jwt.JwtAuthenticationEntryPoint;
+import com.java_app.demo.security.jwt.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

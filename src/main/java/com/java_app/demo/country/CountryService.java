@@ -4,5 +4,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface CountryService {
 
-  ResponseEntity<?> getUserLocationByIp(String ip);
+  ResponseEntity<LocationDto> getUserLocationByIp(String ip);
 }
