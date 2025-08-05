@@ -39,9 +39,6 @@ public class CustomUser implements UserDetails {
 
   private Boolean accountNonExpired;
 
-  @Version
-  private Integer version;
-
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(
       name = "user_roles",
