@@ -1,7 +1,7 @@
 package com.java_app.demo.authentication;
 
-import com.java_app.demo.user.dtos.LoginDto;
-import com.java_app.demo.user.dtos.RegisterDto;
+import com.java_app.demo.authentication.dtos.LoginDto;
+import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
 import org.springframework.http.ResponseEntity;
 

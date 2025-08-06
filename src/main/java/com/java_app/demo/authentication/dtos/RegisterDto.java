@@ -1,4 +1,4 @@
-package com.java_app.demo.user.dtos;
+package com.java_app.demo.authentication.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

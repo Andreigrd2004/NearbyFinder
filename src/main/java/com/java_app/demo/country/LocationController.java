@@ -15,7 +15,7 @@ public class LocationController {
   CountryService countryService;
 
   @GetMapping("/location")
-  public ResponseEntity<?> getLocation(@RequestParam("ip") String ip) {
+  public ResponseEntity<LocationDto> getLocation(@RequestParam("ip") String ip) {
     return countryService.getUserLocationByIp(ip);
   }
 }
