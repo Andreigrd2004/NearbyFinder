@@ -1,4 +1,4 @@
-package com.java_app.demo.api.news.dto;
+package com.java_app.demo.news.dto;
 
 import lombok.Data;
 

@@ -1,8 +1,8 @@
-package com.java_app.demo.country;
+package com.java_app.demo.location;
 
 import org.springframework.http.ResponseEntity;
 
-public interface CountryService {
+public interface LocationService {
 
   ResponseEntity<LocationDto> getUserLocationByIp(String ip);
 }

@@ -1,7 +1,5 @@
-package com.java_app.demo.country;
+package com.java_app.demo.location;
 
-import com.java_app.demo.currency.Currency;
-import com.java_app.demo.api.news.News;
 import com.java_app.demo.user.CustomUser;
 import jakarta.persistence.*;
 import java.util.HashSet;
@@ -25,14 +23,12 @@ public class Country {
 
   private String name;
 
-  @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<Currency> currencies = new HashSet<>();
+  private String currency;
 
   @ManyToMany(mappedBy = "associatedCountries")
   Set<CustomUser> associatedCustomUsers = new HashSet<>();
 
-  @OneToMany(mappedBy = "country", cascade = CascadeType.ALL, orphanRemoval = true)
-  Set<News> news = new HashSet<>();
+  private String country_code;
 
   @Override
   public String toString() {

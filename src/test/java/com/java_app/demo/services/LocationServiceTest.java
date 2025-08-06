@@ -1,9 +1,7 @@
 package com.java_app.demo.services;
 
-import com.java_app.demo.country.CountryService;
-import com.java_app.demo.country.LocationDto;
-import com.java_app.demo.country.impl.CountryServiceImpl;
-import org.apache.commons.validator.routines.InetAddressValidator;
+import com.java_app.demo.location.LocationDto;
+import com.java_app.demo.location.impl.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,13 +15,13 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CountryServiceTest {
+public class LocationServiceTest {
 
     @Mock
     private RestTemplate restTemplate;
 
     @InjectMocks
-    private CountryServiceImpl countryService;
+    private LocationServiceImpl countryService;
 
     @Test
     void testGetUserLocationByIp_validIP_returnsLocation() {

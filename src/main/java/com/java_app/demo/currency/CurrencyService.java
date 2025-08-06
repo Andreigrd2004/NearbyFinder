@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface CurrencyService {
 
-    ResponseEntity<Map<String, Double>> getCurrencies(String source);
+    ResponseEntity<Map<String,Double>> getCurrencies(String ip, String source);
 }
