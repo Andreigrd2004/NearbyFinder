@@ -19,4 +19,5 @@ public class LocationDto {
   private String lat;
   private String lon;
   private String isp;
+  private String currency;
 }
