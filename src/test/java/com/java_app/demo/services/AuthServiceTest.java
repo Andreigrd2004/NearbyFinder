@@ -3,6 +3,7 @@ package com.java_app.demo.services;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.authentication.AuthServiceImpl;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
@@ -48,7 +49,7 @@ public class AuthServiceTest {
     when(authenticationManager.authenticate(any())).thenReturn(authentication);
     when(jwtTokenProvider.generateToken(authentication)).thenReturn(expectedToken);
 
-    ResponseEntity<JwtAuthResponse> response = authService.login(loginDto);
+    ResponseEntity<JwtAuthResponse> response = new ResponseEntity<>(authService.login(loginDto),  HttpStatus.OK) ;
 
     assertEquals(HttpStatus.OK,response.getStatusCode());
     assertNotNull(response.getBody());
@@ -62,8 +63,8 @@ public class AuthServiceTest {
     void testRegisterUser(){
         RegisterDto registerDto = new RegisterDto("string", "string", "string", "string");
         when(userRepository.existsByUsername(registerDto.getUsername())).thenReturn(false);
-
-        ResponseEntity<String> response = authService.register(registerDto);
+        CustomTransferAdmin call = authService.register(registerDto);
+        ResponseEntity<String> response = new ResponseEntity<>(call.getMessage(), call.getStatus()) ;
 
         assertEquals(HttpStatus.OK,response.getStatusCode());
         assertEquals("User registered successfully",  response.getBody());

@@ -1,11 +1,10 @@
 package com.java_app.demo.currency;
 
 import jakarta.persistence.*;
-import java.util.Date;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+import lombok.*;
 
 @Entity
 @Table(name = "exchange", schema = "nearby_finder")
@@ -13,6 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Exchange {
 
   @Id
@@ -25,12 +25,5 @@ public class Exchange {
 
   private double amount;
 
-  private Date ExpirationDate;
-
-  public Exchange(String source, String target, Double amount, Date expirationTime) {
-    this.source = source;
-    this.target = target;
-    this.amount = amount;
-    this.ExpirationDate = expirationTime;
-  }
+  private LocalDateTime expirationDate;
 }

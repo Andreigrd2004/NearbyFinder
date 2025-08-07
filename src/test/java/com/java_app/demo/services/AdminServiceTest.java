@@ -3,6 +3,7 @@ package com.java_app.demo.services;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.admin.impl.AdminServiceImpl;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
@@ -43,7 +44,7 @@ public class AdminServiceTest {
     List<UserDto> users = dbUsers.stream().map(UserMapper.INSTANCE::UserToUserDto).toList();
     when(userRepository.getAllUsers()).thenReturn(dbUsers);
 
-    ResponseEntity<List<UserDto>> response = adminService.getAllUsers();
+    ResponseEntity<List<UserDto>> response = new ResponseEntity<>(adminService.getAllUsers(), HttpStatus.OK);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertEquals(users, response.getBody());
@@ -59,9 +60,9 @@ public class AdminServiceTest {
     customUser.setRoles(new HashSet<>(Collections.singleton(role)));
     when(userRepository.findCustomUserByEmail(email)).thenReturn(customUser);
 
-    ResponseEntity<String> response = adminService.updateUserAsAdmin(email, role);
+    CustomTransferAdmin response = adminService.updateUserAsAdmin(email, role);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatus());
     verify(userRepository, times(1)).findCustomUserByEmail(email);
     verify(userRepository, times(1)).save(any());
   }
@@ -75,9 +76,9 @@ public class AdminServiceTest {
     customUser.setRoles(new HashSet<>(Collections.singleton(role)));
     when(userRepository.existsByEmail(email)).thenReturn(false);
 
-    ResponseEntity<String> response = adminService.updateUserAsAdmin(email, role);
+    CustomTransferAdmin response = adminService.updateUserAsAdmin(email, role);
 
-    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatus());
     verify(userRepository, times(1)).existsByEmail(email);
   }
 
@@ -105,10 +106,10 @@ public class AdminServiceTest {
     when(userRepository.findCustomUserById(any())).thenReturn(customUser);
     when(keysRepository.findAllByCustomUser(customUser)).thenReturn(listKeys);
 
-    ResponseEntity<List<KeyDto>> response = adminService.getAllUserKeys(id);
+    CustomTransferAdmin response = adminService.getAllUserKeys(id);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertEquals(keysDto, response.getBody());
+    assertEquals(HttpStatus.OK, response.getStatus());
+    assertEquals(keysDto, response.getKeys());
     verify(keysRepository, times(1)).findAllByCustomUser(customUser);
     verify(userRepository, times(1)).findCustomUserById(id);
 
@@ -120,9 +121,9 @@ public class AdminServiceTest {
     Integer id = 1;
     when(keysRepository.existsById(id)).thenReturn(true);
 
-    ResponseEntity<String> response = adminService.deleteKeyAsAdmin(id);
+    CustomTransferAdmin response = adminService.deleteKeyAsAdmin(id);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatus());
     verify(keysRepository, times(1)).existsById(id);
     verify(keysRepository, times(1)).deleteApiKeyById(id);
 
@@ -140,9 +141,9 @@ public class AdminServiceTest {
     when(keysRepository.existsApiKeyByCustomUser_Id(user_id)).thenReturn(true);
     when(keysRepository.findApiKeyById(id)).thenReturn(apiKey);
 
-    ResponseEntity<String> response = adminService.updateUserKey(id, name, user_id);
+    CustomTransferAdmin response = adminService.updateUserKey(id, name, user_id);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatus());
     verify(keysRepository, times(1)).existsById(id);
     verify(keysRepository, times(1)).existsApiKeyByCustomUser_Id(user_id);
   }
@@ -152,9 +153,9 @@ public class AdminServiceTest {
     Integer id = 1;
     when(userRepository.existsById(any())).thenReturn(true);
 
-    ResponseEntity<String> response = adminService.deleteUserAsAdmin(id);
+    CustomTransferAdmin response = adminService.deleteUserAsAdmin(id);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals(HttpStatus.OK, response.getStatus());
     verify(userRepository, times(1)).existsById(id);
     verify(userRepository, times(1)).deleteCustomUserById(id);
     verify(keysRepository, times(1)).deleteByCustomUserId(id);

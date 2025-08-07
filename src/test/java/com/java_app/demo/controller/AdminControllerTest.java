@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.java_app.demo.admin.AdminController;
 import com.java_app.demo.admin.AdminService;
+import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.authentication.AuthService;
 import com.java_app.demo.authentication.dtos.RegisterDto;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,9 +49,8 @@ public class AdminControllerTest {
         new UserDto(
             1, "a@mail.com", "a", true, true, new HashSet<>(Collections.singleton("ROLE_USER")));
     users.add(user1);
-    ResponseEntity<List<UserDto>> response = new ResponseEntity<>(users, HttpStatus.OK);
 
-    when(adminService.getAllUsers()).thenReturn(response);
+    when(adminService.getAllUsers()).thenReturn(users);
 
     mockMvc
         .perform(MockMvcRequestBuilders.get("/admin/users").accept(MediaType.APPLICATION_JSON))
@@ -65,9 +64,9 @@ public class AdminControllerTest {
 
   @Test
   public void testAddingUser() throws Exception {
-    UserDto user = new UserDto(1, "a", "a", true, true, new HashSet<>(Collections.singleton("ROLE_USER")));
-    ResponseEntity<String> response = new ResponseEntity<>("User registered successfully", HttpStatus.OK);
-    when(authService.register(any())).thenReturn(response);
+    RegisterDto user = new RegisterDto("a", "a", "a", "a");
+    CustomTransferAdmin transfer = new CustomTransferAdmin("User registered successfully", HttpStatus.OK);
+    when(authService.register(any())).thenReturn(transfer);
 
     mockMvc.perform(MockMvcRequestBuilders.post("/admin/users").accept(MediaType.APPLICATION_JSON)
                     .with(csrf())
@@ -83,8 +82,8 @@ public class AdminControllerTest {
   public void testUpdatingUser() throws Exception {
     String email = "a";
     String role = "ROLE_USER";
-    ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
-    when(adminService.updateUserAsAdmin(any(), any())).thenReturn(response);
+    CustomTransferAdmin transfer = new CustomTransferAdmin("", HttpStatus.OK);
+    when(adminService.updateUserAsAdmin(any(), any())).thenReturn(transfer);
 
     mockMvc.perform(MockMvcRequestBuilders.put("/admin/users").accept(MediaType.APPLICATION_JSON)
                     .with(csrf())
@@ -98,9 +97,8 @@ public class AdminControllerTest {
   @Test
   public void testDeletingUser() throws Exception {
     Integer userId = 1;
-    ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
-
-    when(adminService.deleteUserAsAdmin(userId)).thenReturn(response);
+    CustomTransferAdmin transfer = new CustomTransferAdmin("", HttpStatus.OK);
+    when(adminService.deleteUserAsAdmin(userId)).thenReturn(transfer);
 
     mockMvc.perform(MockMvcRequestBuilders.delete("/admin/users").accept(MediaType.APPLICATION_JSON)
     .with(csrf())
@@ -113,7 +111,7 @@ public class AdminControllerTest {
   @Test
   public void testDeletingKey() throws Exception {
     Integer id = 1;
-    ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
+    CustomTransferAdmin response = new CustomTransferAdmin("", HttpStatus.OK);
 
     when(adminService.deleteKeyAsAdmin(id)).thenReturn(response);
 
@@ -131,7 +129,7 @@ public class AdminControllerTest {
     Integer id = 1;
     String name = "1";
     Integer user_id = 1;
-    ResponseEntity<String> response = new ResponseEntity<>(HttpStatus.OK);
+    CustomTransferAdmin response = new CustomTransferAdmin("",  HttpStatus.OK);
 
     when(adminService.updateUserKey(any(), any(), any())).thenReturn(response);
 

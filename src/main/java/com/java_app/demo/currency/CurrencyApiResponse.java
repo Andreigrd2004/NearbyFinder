@@ -1,12 +1,11 @@
 package com.java_app.demo.currency;
 
-import lombok.Data;
+import java.util.Map;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Map;
-
-@Data
 @Getter
+@AllArgsConstructor
 public class CurrencyApiResponse {
   String error;
   Map<String, Double> rates;

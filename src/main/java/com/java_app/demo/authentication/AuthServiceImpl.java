@@ -1,5 +1,6 @@
 package com.java_app.demo.authentication;
 
+import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
@@ -9,7 +10,6 @@ import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.mapper.RegisterMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public ResponseEntity<JwtAuthResponse> login(LoginDto loginDto) {
+  public JwtAuthResponse login(LoginDto loginDto) {
 
     Authentication authentication =
         authenticationManager.authenticate(
@@ -41,17 +41,16 @@ public class AuthServiceImpl implements AuthService {
     JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
     jwtAuthResponse.setAccessToken(token);
 
-    return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+    return jwtAuthResponse;
   }
 
-  public ResponseEntity<String> register(RegisterDto registerDto) {
-
+  public CustomTransferAdmin register(RegisterDto registerDto) {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
-      return new ResponseEntity<>("Username is already taken", HttpStatus.BAD_REQUEST);
+      return new CustomTransferAdmin("Username is already taken", HttpStatus.BAD_REQUEST);
     }
     CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);
 
     userRepository.save(user);
-    return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+    return new CustomTransferAdmin("User registered successfully", HttpStatus.OK);
   }
 }

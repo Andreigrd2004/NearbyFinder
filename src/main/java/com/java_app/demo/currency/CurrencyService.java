@@ -1,10 +1,6 @@
 package com.java_app.demo.currency;
 
-import org.springframework.http.ResponseEntity;
-
-import java.util.Map;
-
 public interface CurrencyService {
 
-    ResponseEntity<Map<String,Double>> getCurrencies(String ip, String source);
+    CustomTransferCurrency getExchangeRate(String ip, String source);
 }

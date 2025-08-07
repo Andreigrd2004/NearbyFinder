@@ -1,6 +1,6 @@
 package com.java_app.demo.news;
 
-import com.java_app.demo.news.dto.NewDto;
+import com.java_app.demo.news.dto.NewsDto;
 import java.util.List;
 import lombok.Data;
 import lombok.Getter;
@@ -9,5 +9,5 @@ import lombok.Getter;
 @Getter
 public class NewsApiResponse {
   private String status;
-  private List<NewDto> results;
+  private List<NewsDto> results;
 }
