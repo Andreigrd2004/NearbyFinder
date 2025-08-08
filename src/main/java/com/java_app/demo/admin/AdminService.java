@@ -1,18 +1,19 @@
 package com.java_app.demo.admin;
 
+import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.user.dtos.UserDto;
 import java.util.List;
 
 public interface AdminService {
   List<UserDto> getAllUsers();
 
-  CustomTransferAdmin updateUserAsAdmin(String userId, String userRole);
+  String updateUserAsAdmin(String userId, String userRole);
 
-  CustomTransferAdmin deleteUserAsAdmin(Integer id);
+  String deleteUserAsAdmin(Integer id);
 
-  CustomTransferAdmin getAllUserKeys(Integer userId);
+    String deleteKeyAsAdmin(Integer id);
 
-  CustomTransferAdmin deleteKeyAsAdmin(Integer id);
+  String updateUserKey(Integer id, String name, Integer user_id);
 
-  CustomTransferAdmin updateUserKey(Integer id, String name, Integer user_id);
+  List<KeyDto> getAllUserKeys(Integer userId);
 }

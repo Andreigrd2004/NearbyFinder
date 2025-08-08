@@ -28,7 +28,7 @@ public class Country {
   @ManyToMany(mappedBy = "associatedCountries")
   Set<CustomUser> associatedCustomUsers = new HashSet<>();
 
-  private String country_code;
+  private String code;
 
   @Override
   public String toString() {

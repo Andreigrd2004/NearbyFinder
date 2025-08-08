@@ -1,7 +1,6 @@
 package com.java_app.demo.admin.impl;
 
 import com.java_app.demo.admin.AdminService;
-import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
 import com.java_app.demo.apikey.model.KeyDto;
@@ -16,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -38,13 +38,12 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  public CustomTransferAdmin updateUserAsAdmin(String userEmail, String userRole) {
-    CustomTransferAdmin transfer;
+  public String updateUserAsAdmin(String userEmail, String userRole)
+      throws HttpClientErrorException {
     if (userEmail.isEmpty() && userRole.isEmpty() && !userRepository.existsByEmail(userEmail)) {
       log.info(
           "The Admin tried to update the user with the following email {}, but failed.", userEmail);
-      transfer = new CustomTransferAdmin("", HttpStatus.BAD_REQUEST);
-      return transfer;
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     CustomUser user = userRepository.findCustomUserByEmail(userEmail);
 
@@ -55,64 +54,61 @@ public class AdminServiceImpl implements AdminService {
     log.info(
         "Admin updated this user: {}",
         user.getUsername() + " with the following email and role: " + userEmail + ", " + userRole);
-    transfer = new CustomTransferAdmin("", HttpStatus.OK);
-    return transfer;
+    return "Updated successfully";
   }
 
   @Override
   @Transactional
-  public CustomTransferAdmin deleteUserAsAdmin(Integer id) {
-    if (userRepository.existsById(id)) {
-      userRepository.deleteCustomUserById(id);
-      keysRepository.deleteByCustomUserId(id);
-      log.info("The Admin deleted the user with the following id: {}", id);
-      return new CustomTransferAdmin("", HttpStatus.OK);
+  public String deleteUserAsAdmin(Integer id) throws HttpClientErrorException {
+    if (!userRepository.existsById(id)) {
+      log.info("The Admin tried to delete the user with the following id: {}", id);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info("The Admin tried to delete the user with the following id: {}", id);
-    return new CustomTransferAdmin("", HttpStatus.NOT_FOUND);
+    userRepository.deleteCustomUserById(id);
+    keysRepository.deleteByCustomUserId(id);
+    log.info("The Admin deleted the user with the following id: {}", id);
+    return "User deleted successfully";
   }
 
   @Override
-  public CustomTransferAdmin getAllUserKeys(Integer userId) {
+  public List<KeyDto> getAllUserKeys(Integer userId) throws HttpClientErrorException {
     CustomUser user = userRepository.findCustomUserById(userId);
-    if (user != null) {
-      List<KeyDto> keys =
-          keysRepository.findAllByCustomUser(user).stream()
-              .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-              .toList();
-
-      return new CustomTransferAdmin(keys, HttpStatus.OK);
+    if (user == null) {
+      log.info(
+          "Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info(
-        "Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
-    return new CustomTransferAdmin("", HttpStatus.NOT_FOUND);
+    return keysRepository.findAllByCustomUser(user).stream()
+        .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
+        .toList();
   }
 
   @Override
   @Transactional
-  public CustomTransferAdmin deleteKeyAsAdmin(Integer id) {
-    if (keysRepository.existsById(id)) {
-      keysRepository.deleteApiKeyById(id);
-      log.info("The Admin deleted the Apikey with the following id: {}", id);
-      return new CustomTransferAdmin("", HttpStatus.OK);
+  public String deleteKeyAsAdmin(Integer id) throws HttpClientErrorException {
+    if (!keysRepository.existsById(id)) {
+      log.info("The Admin tried to delete the Apikey with the following id: {}", id);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info("The Admin tried to delete the Apikey with the following id: {}", id);
-    return new CustomTransferAdmin("", HttpStatus.NOT_FOUND);
+    keysRepository.deleteApiKeyById(id);
+    log.info("The Admin deleted the Apikey with the following id: {}", id);
+    return "User's keys deleted successfully";
   }
 
   @Override
-  public CustomTransferAdmin updateUserKey(Integer id, String name, Integer user_id) {
-    if (keysRepository.existsById(id) && keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
-      ApiKey key = keysRepository.findApiKeyById(id);
-      String oldName = key.getName();
-      key.setName(name);
-      keysRepository.save(key);
-      log.info("Admin updated this ApiKey: {}", oldName + " with the following name: " + name);
-      return new CustomTransferAdmin("", HttpStatus.OK);
+  public String updateUserKey(Integer id, String name, Integer user_id)
+      throws HttpClientErrorException {
+    if (!keysRepository.existsById(id) && !keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
+      log.info(
+          "The Admin tried to update the key with the following {}, but failed because was not found.",
+          name);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info(
-        "The Admin tried to update the key with the following {}, but failed because was not found.",
-        name);
-    return new CustomTransferAdmin("", HttpStatus.NOT_FOUND);
+    ApiKey key = keysRepository.findApiKeyById(id);
+    String oldName = key.getName();
+    key.setName(name);
+    keysRepository.save(key);
+    log.info("Admin updated this ApiKey: {}", oldName + " with the following name: " + name);
+    return "Updated successfully";
   }
 }

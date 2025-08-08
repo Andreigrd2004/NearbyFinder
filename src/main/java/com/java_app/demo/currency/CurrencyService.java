@@ -1,6 +1,8 @@
 package com.java_app.demo.currency;
 
+import com.java_app.demo.currency.dto.ExchangeDto;
+
 public interface CurrencyService {
 
-    CustomTransferCurrency getExchangeRate(String ip, String source);
+    ExchangeDto getExchangeRate(String ip, String source);
 }

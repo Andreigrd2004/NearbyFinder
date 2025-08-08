@@ -3,5 +3,5 @@ package com.java_app.demo.location;
 
 public interface LocationService {
 
-  CustomTransferLocation getUserLocationByIp(String ip);
+  LocationDto getUserLocationByIp(String ip);
 }

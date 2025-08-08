@@ -14,9 +14,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -28,44 +28,42 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public ResponseEntity<String> createApiKey(String keyName) {
+  public String createApiKey(String keyName) throws HttpClientErrorException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
-      return new ResponseEntity<>("This name already exists", HttpStatus.BAD_REQUEST);
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     ApiKey apiKey = new ApiKey(null, generateApiKey(), keyName, getAuthenticatedUser());
     keysRepository.save(apiKey);
 
-    return new ResponseEntity<>("Successfully created!", HttpStatus.OK);
+    return "Successfully created!";
   }
 
   @Override
-  public ResponseEntity<List<KeyDto>> getCurrentUserApiKeys() {
-    return new ResponseEntity<>(
-        keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
-            .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-            .collect(Collectors.toList()),
-        HttpStatus.OK);
+  public List<KeyDto> getCurrentUserApiKeys() {
+    return keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
+        .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
+        .collect(Collectors.toList());
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> delete(String keyName) {
+  public String delete(String keyName) throws HttpClientErrorException {
     if (!keysRepository.existsByName(keyName)) {
-      return new ResponseEntity<>("Key Not Found!", HttpStatus.NOT_FOUND);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
     keysRepository.deleteByName(keyName);
 
-    return new ResponseEntity<>("Successfully deleted!", HttpStatus.OK);
+    return "Successfully deleted!";
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> update(String keyName, String newName) {
-    if (keyName != null && newName != null && keysRepository.existsByName(keyName)) {
-      keysRepository.updateApiKey(keyName, newName);
-      return new ResponseEntity<>("Successfully modified!", HttpStatus.OK);
+  public String update(String keyName, String newName) throws HttpClientErrorException {
+    if (keyName.isEmpty() && newName.isEmpty() && !keysRepository.existsByName(keyName)) {
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
-    return new ResponseEntity<>("Key Not Found!", HttpStatus.NOT_FOUND);
+    keysRepository.updateApiKey(keyName, newName);
+    return "Successfully modified!";
   }
 
   public CustomUser getAuthenticatedUser() {

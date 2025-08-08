@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.java_app.demo.admin.AdminController;
 import com.java_app.demo.admin.AdminService;
-import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.authentication.AuthService;
 import com.java_app.demo.authentication.dtos.RegisterDto;
@@ -20,7 +19,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -65,63 +63,69 @@ public class AdminControllerTest {
   @Test
   public void testAddingUser() throws Exception {
     RegisterDto user = new RegisterDto("a", "a", "a", "a");
-    CustomTransferAdmin transfer = new CustomTransferAdmin("User registered successfully", HttpStatus.OK);
-    when(authService.register(any())).thenReturn(transfer);
+    when(authService.register(any())).thenReturn("User registered successfully");
 
-    mockMvc.perform(MockMvcRequestBuilders.post("/admin/users").accept(MediaType.APPLICATION_JSON)
-                    .with(csrf())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(String.valueOf(user)))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.content().string("User registered successfully"));
-
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post("/admin/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(String.valueOf(user)))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string("User registered successfully"));
   }
 
   @Test
   public void testUpdatingUser() throws Exception {
     String email = "a";
     String role = "ROLE_USER";
-    CustomTransferAdmin transfer = new CustomTransferAdmin("", HttpStatus.OK);
-    when(adminService.updateUserAsAdmin(any(), any())).thenReturn(transfer);
+    when(adminService.updateUserAsAdmin(any(), any())).thenReturn("User updated successfully");
 
-    mockMvc.perform(MockMvcRequestBuilders.put("/admin/users").accept(MediaType.APPLICATION_JSON)
-                    .with(csrf())
-                    .param("userEmail", email)
-            .param("userRole", role))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .param("userEmail", email)
+                .param("userRole", role))
+        .andDo(print())
+        .andExpect(status().isOk());
     verify(adminService, times(1)).updateUserAsAdmin(any(), any());
   }
 
   @Test
   public void testDeletingUser() throws Exception {
     Integer userId = 1;
-    CustomTransferAdmin transfer = new CustomTransferAdmin("", HttpStatus.OK);
-    when(adminService.deleteUserAsAdmin(userId)).thenReturn(transfer);
+    when(adminService.deleteUserAsAdmin(userId)).thenReturn("User deleted successfully");
 
-    mockMvc.perform(MockMvcRequestBuilders.delete("/admin/users").accept(MediaType.APPLICATION_JSON)
-    .with(csrf())
-    .param("user_id", String.valueOf(userId)))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete("/admin/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .param("user_id", String.valueOf(userId)))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.content().string("User deleted successfully"));
     verify(adminService, times(1)).deleteUserAsAdmin(userId);
   }
 
   @Test
   public void testDeletingKey() throws Exception {
     Integer id = 1;
-    CustomTransferAdmin response = new CustomTransferAdmin("", HttpStatus.OK);
+    when(adminService.deleteKeyAsAdmin(id)).thenReturn("User's keys deleted successfully");
 
-    when(adminService.deleteKeyAsAdmin(id)).thenReturn(response);
-
-    mockMvc.perform(MockMvcRequestBuilders.delete("/admin/keys").accept(MediaType.APPLICATION_JSON)
-            .with(csrf())
-            .param("key_id", String.valueOf(id)))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.delete("/admin/keys")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .param("key_id", String.valueOf(id)))
+        .andDo(print())
+        .andExpect(status().isOk());
     verify(adminService, times(1)).deleteKeyAsAdmin(id);
-
   }
 
   @Test
@@ -129,18 +133,18 @@ public class AdminControllerTest {
     Integer id = 1;
     String name = "1";
     Integer user_id = 1;
-    CustomTransferAdmin response = new CustomTransferAdmin("",  HttpStatus.OK);
+    when(adminService.updateUserKey(any(), any(), any())).thenReturn("Updated successfully");
 
-    when(adminService.updateUserKey(any(), any(), any())).thenReturn(response);
-
-    mockMvc.perform(MockMvcRequestBuilders.put("/admin/keys").accept(MediaType.APPLICATION_JSON)
-    .with(csrf())
-    .param("key_id", String.valueOf(id))
-    .param("name", name)
-            .param("user_id", String.valueOf(user_id)))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/keys")
+                .accept(MediaType.APPLICATION_JSON)
+                .with(csrf())
+                .param("key_id", String.valueOf(id))
+                .param("name", name)
+                .param("user_id", String.valueOf(user_id)))
+        .andDo(print())
+        .andExpect(status().isOk());
     verify(adminService, times(1)).updateUserKey(id, name, user_id);
-
   }
 }

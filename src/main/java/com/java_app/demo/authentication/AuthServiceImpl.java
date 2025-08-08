@@ -1,6 +1,5 @@
 package com.java_app.demo.authentication;
 
-import com.java_app.demo.admin.CustomTransferAdmin;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
@@ -16,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -44,13 +44,13 @@ public class AuthServiceImpl implements AuthService {
     return jwtAuthResponse;
   }
 
-  public CustomTransferAdmin register(RegisterDto registerDto) {
+  public String register(RegisterDto registerDto) throws HttpClientErrorException {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
-      return new CustomTransferAdmin("Username is already taken", HttpStatus.BAD_REQUEST);
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);
 
     userRepository.save(user);
-    return new CustomTransferAdmin("User registered successfully", HttpStatus.OK);
+    return "User registered successfully";
   }
 }
