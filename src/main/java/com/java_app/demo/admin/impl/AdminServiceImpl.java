@@ -11,6 +11,7 @@ import com.java_app.demo.user.dtos.UserDto;
 import com.java_app.demo.user.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,10 +29,9 @@ public class AdminServiceImpl implements AdminService {
   @Override
   public List<UserDto> getAllUsers() {
     List<UserDto> users =
-        List.of(
             userRepository.getAllUsers().stream()
-                .map(UserMapper.INSTANCE::UserToUserDto)
-                .toArray(UserDto[]::new));
+            .map(UserMapper.INSTANCE::UserToUserDto)
+            .collect(Collectors.toList());
     log.info("Admin retrieved those users: {}", users);
     return users;
   }
