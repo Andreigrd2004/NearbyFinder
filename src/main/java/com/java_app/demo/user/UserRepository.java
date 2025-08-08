@@ -21,5 +21,5 @@ public interface UserRepository extends JpaRepository<CustomUser, Integer> {
 
   void deleteCustomUserById(Integer id);
 
-  CustomUser findCustomUserById(Integer id);
+  Optional<CustomUser> findCustomUserById(Integer id);
 }

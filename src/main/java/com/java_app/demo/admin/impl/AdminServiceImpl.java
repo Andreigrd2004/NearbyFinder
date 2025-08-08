@@ -5,6 +5,8 @@ import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
 import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.apikey.model.KeyMapper;
+import com.java_app.demo.authentication.AuthService;
+import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.CustomUser;
 import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.dtos.UserDto;
@@ -25,11 +27,12 @@ public class AdminServiceImpl implements AdminService {
 
   private final UserRepository userRepository;
   private final KeysRepository keysRepository;
+  private final AuthService authService;
 
   @Override
   public List<UserDto> getAllUsers() {
     List<UserDto> users =
-            userRepository.getAllUsers().stream()
+        userRepository.getAllUsers().stream()
             .map(UserMapper.INSTANCE::UserToUserDto)
             .collect(Collectors.toList());
     log.info("Admin retrieved those users: {}", users);
@@ -65,32 +68,34 @@ public class AdminServiceImpl implements AdminService {
       throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
     userRepository.deleteCustomUserById(id);
-    keysRepository.deleteByCustomUserId(id);
     log.info("The Admin deleted the user with the following id: {}", id);
     return "User deleted successfully";
   }
 
   @Override
   public List<KeyDto> getAllUserKeys(Integer userId) throws HttpClientErrorException {
-    CustomUser user = userRepository.findCustomUserById(userId);
-    if (user == null) {
-      log.info(
-          "Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-    }
+    CustomUser user =
+        userRepository
+            .findCustomUserById(userId)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
     return keysRepository.findAllByCustomUser(user).stream()
         .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-        .toList();
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public String createUser(RegisterDto registerDto) {
+    return authService.register(registerDto);
   }
 
   @Override
   @Transactional
   public String deleteKeyAsAdmin(Integer id) throws HttpClientErrorException {
-    if (!keysRepository.existsById(id)) {
-      log.info("The Admin tried to delete the Apikey with the following id: {}", id);
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-    }
-    keysRepository.deleteApiKeyById(id);
+    ApiKey key =
+        keysRepository
+            .findById(id)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+    keysRepository.delete(key);
     log.info("The Admin deleted the Apikey with the following id: {}", id);
     return "User's keys deleted successfully";
   }
@@ -105,10 +110,10 @@ public class AdminServiceImpl implements AdminService {
       throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
     ApiKey key = keysRepository.findApiKeyById(id);
-    String oldName = key.getName();
+    log.info("Admin updated this ApiKey: {}", key.getName() + " with the following name: " + name);
     key.setName(name);
     keysRepository.save(key);
-    log.info("Admin updated this ApiKey: {}", oldName + " with the following name: " + name);
+
     return "Updated successfully";
   }
 }

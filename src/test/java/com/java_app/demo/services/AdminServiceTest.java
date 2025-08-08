@@ -108,7 +108,7 @@ public class AdminServiceTest {
     customUser.setApi_keySet(keys);
     List<ApiKey> listKeys = new ArrayList<>(keys);
     List<KeyDto> keysDto = keys.stream().map(KeyMapper.INSTANCE::apiKeyToKeyDto).toList();
-    when(userRepository.findCustomUserById(any())).thenReturn(customUser);
+    when(userRepository.findCustomUserById(any())).thenReturn(Optional.of(customUser));
     when(keysRepository.findAllByCustomUser(customUser)).thenReturn(listKeys);
 
     List<KeyDto> response = adminService.getAllUserKeys(id);

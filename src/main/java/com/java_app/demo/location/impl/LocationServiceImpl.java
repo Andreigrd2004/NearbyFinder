@@ -20,8 +20,7 @@ public class LocationServiceImpl implements LocationService {
 
   @Override
   public LocationDto getUserLocationByIp(String ip) throws HttpClientErrorException {
-    InetAddressValidator validator = InetAddressValidator.getInstance();
-    if (!validator.isValid(ip)) {
+    if (!InetAddressValidator.getInstance().isValid(ip)) {
       throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     try {

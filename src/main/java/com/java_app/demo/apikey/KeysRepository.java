@@ -10,14 +10,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface KeysRepository extends JpaRepository<ApiKey, String> {
+public interface KeysRepository extends JpaRepository<ApiKey, Integer> {
   List<ApiKey> findByCustomUser(CustomUser customUser);
 
   boolean existsByName(String name);
 
   boolean existsByNameAndCustomUser(String name, CustomUser customUser);
-
-  boolean existsById(Integer id);
 
   void deleteByName(String name);
 
@@ -37,5 +35,5 @@ public interface KeysRepository extends JpaRepository<ApiKey, String> {
 
   boolean existsApiKeyByCustomUser_Id(Integer userId);
 
-    List<ApiKey> findCustomUserById(Integer id);
+  List<ApiKey> findCustomUserById(Integer id);
 }

@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.java_app.demo.currency.*;
 import com.java_app.demo.currency.dto.ExchangeDto;
-import com.java_app.demo.location.LocationDto;
 import com.java_app.demo.location.LocationService;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
@@ -26,14 +25,11 @@ public class CurrencyServiceImpl implements CurrencyService {
 
   public ExchangeDto getExchangeRate(String ip, @NotBlank String target)
       throws HttpClientErrorException {
-
-    LocationDto locationDto = locationService.getUserLocationByIp(ip);
-    LocalDateTime now = LocalDateTime.now();
-    String source = locationDto.getCurrency();
-    Optional<Exchange> optional_exchange = exchangeRepository.findBySourceAndTarget(source, target);
-    if (optional_exchange.isPresent()
-        && now.isBefore(optional_exchange.get().getExpirationDate())) {
-      Exchange result = optional_exchange.get();
+    String source = locationService.getUserLocationByIp(ip).getCurrency();
+    Optional<Exchange> optionalExchange = exchangeRepository.findBySourceAndTarget(source, target);
+    if (optionalExchange.isPresent()
+        && LocalDateTime.now().isBefore(optionalExchange.get().getExpirationDate())) {
+      Exchange result = optionalExchange.get();
       return new ExchangeDto(source, target, result.getAmount());
     } else {
       if (target.length() != 3) {

@@ -20,6 +20,5 @@ public class LocationDto {
   private String lat;
   private String lon;
   private String isp;
-  @NotBlank
-  private String currency;
+  @NotBlank private String currency;
 }

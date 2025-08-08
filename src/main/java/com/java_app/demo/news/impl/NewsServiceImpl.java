@@ -25,10 +25,7 @@ public class NewsServiceImpl implements NewsService {
   private final RestTemplate restTemplate;
 
   public List<NewsDto> getNewspaper(String ip) throws HttpClientErrorException {
-
-    LocationDto locationDto = locationService.getUserLocationByIp(ip);
-
-    String country_code = countryRepository.findCountryByName(locationDto.getCountry()).getCode();
+    String country_code = countryRepository.findCountryByName(getLocationCountryName(ip)).getCode();
     NewsApiResponse news =
         requireNonNull(
             restTemplate.getForObject(
@@ -43,5 +40,10 @@ public class NewsServiceImpl implements NewsService {
     }
 
     return news.getResults();
+  }
+
+  public String getLocationCountryName(String ip) {
+    LocationDto locationDto = locationService.getUserLocationByIp(ip);
+    return locationDto.getCountry();
   }
 }

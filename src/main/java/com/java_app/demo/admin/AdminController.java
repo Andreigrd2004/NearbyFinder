@@ -1,7 +1,6 @@
 package com.java_app.demo.admin;
 
 import com.java_app.demo.apikey.model.KeyDto;
-import com.java_app.demo.authentication.AuthService;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.dtos.UserDto;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
   AdminService adminService;
-  AuthService authService;
 
   @GetMapping("/users")
   public List<UserDto> getUsers() {
@@ -22,7 +20,7 @@ public class AdminController {
 
   @PostMapping("/users")
   public String addUser(RegisterDto registerDto) {
-    return authService.register(registerDto);
+    return adminService.createUser(registerDto);
   }
 
   @PutMapping("/users")

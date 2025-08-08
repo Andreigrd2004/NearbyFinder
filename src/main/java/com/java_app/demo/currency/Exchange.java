@@ -1,9 +1,7 @@
 package com.java_app.demo.currency;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-
 import lombok.*;
 
 @Entity
