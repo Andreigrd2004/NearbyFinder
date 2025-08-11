@@ -1,6 +1,8 @@
 package com.java_app.demo.admin.impl;
 
 import com.java_app.demo.admin.AdminService;
+import com.java_app.demo.advice.exceptions.InexistentApiKeyException;
+import com.java_app.demo.advice.exceptions.InexistentUserException;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
 import com.java_app.demo.apikey.model.KeyDto;
@@ -16,9 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @RequiredArgsConstructor
@@ -42,11 +42,11 @@ public class AdminServiceImpl implements AdminService {
   @Override
   @Transactional
   public String updateUserAsAdmin(String userEmail, String userRole)
-      throws HttpClientErrorException {
-    if (userEmail.isEmpty() && userRole.isEmpty() && !userRepository.existsByEmail(userEmail)) {
+      throws InexistentUserException {
+    if (userEmail.isEmpty() || userRole.isEmpty() || !userRepository.existsByEmail(userEmail)) {
       log.info(
           "The Admin tried to update the user with the following email {}, but failed.", userEmail);
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+      throw new InexistentUserException("User not found with the following email: " + userEmail);
     }
     CustomUser user = userRepository.findCustomUserByEmail(userEmail);
 
@@ -62,10 +62,10 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  public String deleteUserAsAdmin(Integer id) throws HttpClientErrorException {
+  public String deleteUserAsAdmin(Integer id) throws InexistentUserException {
     if (!userRepository.existsById(id)) {
       log.info("The Admin tried to delete the user with the following id: {}", id);
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+      throw new InexistentUserException("User not found with the following id: " + id);
     }
     userRepository.deleteCustomUserById(id);
     log.info("The Admin deleted the user with the following id: {}", id);
@@ -73,14 +73,16 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  public List<KeyDto> getAllUserKeys(Integer userId) throws HttpClientErrorException {
+  public List<KeyDto> getAllUserKeys(Integer userId) throws InexistentUserException {
     CustomUser user =
         userRepository
             .findCustomUserById(userId)
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+            .orElseThrow(
+                () ->
+                    new InexistentUserException("User not found with the following id: " + userId));
     return keysRepository.findAllByCustomUser(user).stream()
         .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-            .collect(Collectors.toList());
+        .collect(Collectors.toList());
   }
 
   @Override
@@ -90,11 +92,13 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  public String deleteKeyAsAdmin(Integer id) throws HttpClientErrorException {
+  public String deleteKeyAsAdmin(Integer id) throws InexistentApiKeyException {
     ApiKey key =
         keysRepository
             .findById(id)
-            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+            .orElseThrow(
+                () ->
+                    new InexistentApiKeyException("ApiKey not found with the following id: " + id));
     keysRepository.delete(key);
     log.info("The Admin deleted the Apikey with the following id: {}", id);
     return "User's keys deleted successfully";
@@ -102,12 +106,15 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   public String updateUserKey(Integer id, String name, Integer user_id)
-      throws HttpClientErrorException {
-    if (!keysRepository.existsById(id) && !keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
+      throws InexistentApiKeyException, InexistentUserException {
+    if(!keysRepository.existsApiKeyByCustomUser_Id(user_id)){
+      throw new InexistentUserException("User not found with the following id: " + user_id);
+    }
+    if (!keysRepository.existsById(id)) {
       log.info(
           "The Admin tried to update the key with the following {}, but failed because was not found.",
           name);
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+      throw new InexistentApiKeyException("ApiKey not found with the following id: " + id);
     }
     ApiKey key = keysRepository.findApiKeyById(id);
     log.info("Admin updated this ApiKey: {}", key.getName() + " with the following name: " + name);
