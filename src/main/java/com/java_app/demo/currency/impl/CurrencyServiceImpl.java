@@ -2,8 +2,8 @@ package com.java_app.demo.currency.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.java_app.demo.advice.exceptions.FormatNotRespectedException;
-import com.java_app.demo.advice.exceptions.ReceivedApiResponseException;
+import com.java_app.demo.advice.exceptions.BadRequestException;
+import com.java_app.demo.advice.exceptions.InternalServerErrorException;
 import com.java_app.demo.currency.*;
 import com.java_app.demo.currency.dto.ExchangeDto;
 import com.java_app.demo.location.LocationService;
@@ -24,7 +24,7 @@ public class CurrencyServiceImpl implements CurrencyService {
   private final LocationService locationService;
 
   public ExchangeDto getExchangeRate(String ip, @NotBlank String target)
-      throws FormatNotRespectedException, ReceivedApiResponseException {
+      throws BadRequestException, InternalServerErrorException {
     String source = locationService.getUserLocationByIp(ip).getCurrency();
     Optional<Exchange> optionalExchange = exchangeRepository.findBySourceAndTarget(source, target);
     if (optionalExchange.isPresent()) {
@@ -35,7 +35,7 @@ public class CurrencyServiceImpl implements CurrencyService {
       exchangeRepository.delete(optionalExchange.orElse(null));
     }
     if (target.length() != 3) {
-      throw new FormatNotRespectedException("The request doesn't respect the 3 letters format.");
+      throw new BadRequestException("The request doesn't respect the 3 letters format.");
     }
       CurrencyApiResponse response;
       try{
@@ -48,7 +48,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                                   + target.toUpperCase(),
                           CurrencyApiResponse.class));
       } catch (Exception e) {
-      throw new ReceivedApiResponseException(
+      throw new InternalServerErrorException(
               "An internal error occurred while trying to call the exchange rate API:"
                       + e.getMessage());
     }

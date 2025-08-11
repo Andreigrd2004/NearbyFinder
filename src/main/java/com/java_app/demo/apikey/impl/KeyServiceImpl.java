@@ -1,8 +1,8 @@
 package com.java_app.demo.apikey.impl;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import com.java_app.demo.advice.exceptions.ApiKeyAlreadyExistentException;
-import com.java_app.demo.advice.exceptions.InexistentApiKeyException;
+import com.java_app.demo.advice.exceptions.BadRequestException;
+import com.java_app.demo.advice.exceptions.NotFoundException;
 import com.java_app.demo.apikey.KeyService;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
@@ -28,9 +28,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String createApiKey(String keyName) throws ApiKeyAlreadyExistentException {
+  public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
-      throw new ApiKeyAlreadyExistentException(
+      throw new BadRequestException(
           "ApiKey already exists with the following name: " + keyName);
     }
     ApiKey apiKey = new ApiKey(null, generateApiKey(), keyName, getAuthenticatedUser());
@@ -48,9 +48,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String delete(String keyName) throws InexistentApiKeyException {
+  public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
-      throw new InexistentApiKeyException("ApiKey not found with the following name: " + keyName);
+      throw new NotFoundException("ApiKey not found with the following name: " + keyName);
     }
     keysRepository.deleteByName(keyName);
 
@@ -59,9 +59,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String update(String keyName, String newName) throws InexistentApiKeyException {
+  public String update(String keyName, String newName) throws NotFoundException {
     if (keyName.isEmpty() || newName.isEmpty() || !keysRepository.existsByName(keyName)) {
-      throw new InexistentApiKeyException("ApiKey not found with the following name: " + keyName);
+      throw new NotFoundException("ApiKey not found with the following name: " + keyName);
     }
     keysRepository.updateApiKey(keyName, newName);
     return "Successfully modified!";

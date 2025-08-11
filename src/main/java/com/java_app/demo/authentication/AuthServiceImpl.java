@@ -1,6 +1,6 @@
 package com.java_app.demo.authentication;
 
-import com.java_app.demo.advice.exceptions.UserAlreadyExistentException;
+import com.java_app.demo.advice.exceptions.BadRequestException;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
@@ -43,9 +43,9 @@ public class AuthServiceImpl implements AuthService {
     return jwtAuthResponse;
   }
 
-  public String register(RegisterDto registerDto) throws UserAlreadyExistentException {
+  public String register(RegisterDto registerDto) throws BadRequestException {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
-      throw new UserAlreadyExistentException(
+      throw new BadRequestException(
           "The user with the following username already exists.");
     }
     CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);

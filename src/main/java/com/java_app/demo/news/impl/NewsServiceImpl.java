@@ -2,7 +2,7 @@ package com.java_app.demo.news.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.java_app.demo.advice.exceptions.ReceivedApiResponseException;
+import com.java_app.demo.advice.exceptions.InternalServerErrorException;
 import com.java_app.demo.location.CountryRepository;
 import com.java_app.demo.location.LocationDto;
 import com.java_app.demo.location.LocationService;
@@ -23,7 +23,7 @@ public class NewsServiceImpl implements NewsService {
   private final LocationService locationService;
   private final RestTemplate restTemplate;
 
-  public List<NewsDto> getNewspaper(String ip) throws ReceivedApiResponseException {
+  public List<NewsDto> getNewspaper(String ip) throws InternalServerErrorException {
     String country_code = countryRepository.findCountryByName(getLocationCountryName(ip)).getCode();
     NewsApiResponse news =
         requireNonNull(
@@ -35,8 +35,8 @@ public class NewsServiceImpl implements NewsService {
                     + API_KEY,
                 NewsApiResponse.class));
     if (news.getStatus().equals("error")) {
-      throw new ReceivedApiResponseException(
-          "An internal error occurred while trying to call the news API:");
+      throw new InternalServerErrorException(
+          "An internal error occurred while trying to call the news API.");
     }
 
     return news.getResults();
