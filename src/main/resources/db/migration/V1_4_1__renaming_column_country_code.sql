@@ -1,0 +1,1 @@
+ALTER TABLE nearby_finder.country RENAME COLUMN country_code TO code;

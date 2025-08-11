@@ -1,5 +1,6 @@
-package com.java_app.demo.country;
+package com.java_app.demo.location;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,4 +20,5 @@ public class LocationDto {
   private String lat;
   private String lon;
   private String isp;
+  @NotBlank private String currency;
 }

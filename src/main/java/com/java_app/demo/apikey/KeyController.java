@@ -3,7 +3,6 @@ package com.java_app.demo.apikey;
 import com.java_app.demo.apikey.model.KeyDto;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,22 +13,22 @@ public class KeyController {
   private final KeyService keyService;
 
   @PostMapping("/create")
-  public ResponseEntity<String> registerKey(@RequestParam String keyName) {
+  public String registerKey(@RequestParam String keyName) {
     return keyService.createApiKey(keyName);
   }
 
   @GetMapping("/getAll")
-  public ResponseEntity<List<KeyDto>> getKeys() {
+  public List<KeyDto> getKeys() {
     return keyService.getCurrentUserApiKeys();
   }
 
   @DeleteMapping("/delete")
-  public ResponseEntity<String> deleteKey(@RequestParam String keyName) {
+  public String deleteKey(@RequestParam String keyName) {
     return keyService.delete(keyName);
   }
 
   @PutMapping("/update")
-  public ResponseEntity<String> updateKey(@RequestParam String keyName, String newName) {
+  public String updateKey(@RequestParam String keyName, String newName) {
     return keyService.update(keyName, newName);
   }
 }

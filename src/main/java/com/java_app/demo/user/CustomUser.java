@@ -1,7 +1,7 @@
 package com.java_app.demo.user;
 
 import com.java_app.demo.apikey.model.ApiKey;
-import com.java_app.demo.country.Country;
+import com.java_app.demo.location.Country;
 import jakarta.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;

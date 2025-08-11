@@ -9,13 +9,13 @@ import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.mapper.RegisterMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public ResponseEntity<JwtAuthResponse> login(LoginDto loginDto) {
+  public JwtAuthResponse login(LoginDto loginDto) {
 
     Authentication authentication =
         authenticationManager.authenticate(
@@ -41,17 +41,16 @@ public class AuthServiceImpl implements AuthService {
     JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
     jwtAuthResponse.setAccessToken(token);
 
-    return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+    return jwtAuthResponse;
   }
 
-  public ResponseEntity<String> register(RegisterDto registerDto) {
-
+  public String register(RegisterDto registerDto) throws HttpClientErrorException {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
-      return new ResponseEntity<>("Username is already taken", HttpStatus.BAD_REQUEST);
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);
 
     userRepository.save(user);
-    return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+    return "User registered successfully";
   }
 }

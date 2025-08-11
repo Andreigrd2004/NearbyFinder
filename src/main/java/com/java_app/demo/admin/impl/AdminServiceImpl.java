@@ -5,44 +5,48 @@ import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
 import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.apikey.model.KeyMapper;
+import com.java_app.demo.authentication.AuthService;
+import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.CustomUser;
 import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.dtos.UserDto;
 import com.java_app.demo.user.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class AdminServiceImpl implements AdminService {
 
   private final UserRepository userRepository;
   private final KeysRepository keysRepository;
+  private final AuthService authService;
 
   @Override
-  public ResponseEntity<List<UserDto>> getAllUsers() {
+  public List<UserDto> getAllUsers() {
     List<UserDto> users =
-        List.of(
-            userRepository.getAllUsers().stream()
-                .map(UserMapper.INSTANCE::UserToUserDto)
-                .toArray(UserDto[]::new));
+        userRepository.getAllUsers().stream()
+            .map(UserMapper.INSTANCE::UserToUserDto)
+            .collect(Collectors.toList());
     log.info("Admin retrieved those users: {}", users);
-    return new ResponseEntity<>(users, HttpStatus.OK);
+    return users;
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> updateUserAsAdmin(String userEmail, String userRole) {
+  public String updateUserAsAdmin(String userEmail, String userRole)
+      throws HttpClientErrorException {
     if (userEmail.isEmpty() && userRole.isEmpty() && !userRepository.existsByEmail(userEmail)) {
       log.info(
           "The Admin tried to update the user with the following email {}, but failed.", userEmail);
-      return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
     }
     CustomUser user = userRepository.findCustomUserByEmail(userEmail);
 
@@ -53,62 +57,63 @@ public class AdminServiceImpl implements AdminService {
     log.info(
         "Admin updated this user: {}",
         user.getUsername() + " with the following email and role: " + userEmail + ", " + userRole);
-    return new ResponseEntity<>(HttpStatus.OK);
+    return "Updated successfully";
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> deleteUserAsAdmin(Integer id) {
-    if (userRepository.existsById(id)) {
-      userRepository.deleteCustomUserById(id);
-      keysRepository.deleteByCustomUserId(id);
-      log.info("The Admin deleted the user with the following id: {}", id);
-      return new ResponseEntity<>(HttpStatus.OK);
+  public String deleteUserAsAdmin(Integer id) throws HttpClientErrorException {
+    if (!userRepository.existsById(id)) {
+      log.info("The Admin tried to delete the user with the following id: {}", id);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info("The Admin tried to delete the user with the following id: {}", id);
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    userRepository.deleteCustomUserById(id);
+    log.info("The Admin deleted the user with the following id: {}", id);
+    return "User deleted successfully";
   }
 
   @Override
-  public ResponseEntity<List<KeyDto>> getAllUserKeys(Integer userId) {
-    CustomUser user = userRepository.findCustomUserById(userId);
-    if (user != null) {
-      List<KeyDto> keys =
-          keysRepository.findAllByCustomUser(user).stream()
-              .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
-              .toList();
-      return new ResponseEntity<>(keys, HttpStatus.OK);
-    }
-    log.info(
-        "Admin tried to retrieve the keys of the user with the following ID, but the user wasn't found.");
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+  public List<KeyDto> getAllUserKeys(Integer userId) throws HttpClientErrorException {
+    CustomUser user =
+        userRepository
+            .findCustomUserById(userId)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+    return keysRepository.findAllByCustomUser(user).stream()
+        .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public String createUser(RegisterDto registerDto) {
+    return authService.register(registerDto);
   }
 
   @Override
   @Transactional
-  public ResponseEntity<String> deleteKeyAsAdmin(Integer id) {
-    if (keysRepository.existsById(id)) {
-      keysRepository.deleteApiKeyById(id);
-      log.info("The Admin deleted the Apikey with the following id: {}", id);
-      return new ResponseEntity<>(HttpStatus.OK);
-    }
-    log.info("The Admin tried to delete the Apikey with the following id: {}", id);
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+  public String deleteKeyAsAdmin(Integer id) throws HttpClientErrorException {
+    ApiKey key =
+        keysRepository
+            .findById(id)
+            .orElseThrow(() -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+    keysRepository.delete(key);
+    log.info("The Admin deleted the Apikey with the following id: {}", id);
+    return "User's keys deleted successfully";
   }
 
   @Override
-  public ResponseEntity<String> updateUserKey(Integer id, String name, Integer user_id) {
-    if (keysRepository.existsById(id) && keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
-      ApiKey key = keysRepository.findApiKeyById(id);
-      String oldName = key.getName();
-      key.setName(name);
-      keysRepository.save(key);
-      log.info("Admin updated this ApiKey: {}", oldName + " with the following name: " + name);
-      return new ResponseEntity<>(HttpStatus.OK);
+  public String updateUserKey(Integer id, String name, Integer user_id)
+      throws HttpClientErrorException {
+    if (!keysRepository.existsById(id) && !keysRepository.existsApiKeyByCustomUser_Id(user_id)) {
+      log.info(
+          "The Admin tried to update the key with the following {}, but failed because was not found.",
+          name);
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
     }
-    log.info(
-        "The Admin tried to update the key with the following {}, but failed because was not found.",
-        name);
-    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    ApiKey key = keysRepository.findApiKeyById(id);
+    log.info("Admin updated this ApiKey: {}", key.getName() + " with the following name: " + name);
+    key.setName(name);
+    keysRepository.save(key);
+
+    return "Updated successfully";
   }
 }
