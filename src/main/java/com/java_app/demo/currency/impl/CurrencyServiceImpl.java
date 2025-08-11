@@ -31,31 +31,30 @@ public class CurrencyServiceImpl implements CurrencyService {
         && LocalDateTime.now().isBefore(optionalExchange.get().getExpirationDate())) {
       Exchange result = optionalExchange.get();
       return new ExchangeDto(source, target, result.getAmount());
-    } else {
-      if (target.length() != 3) {
-        throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-      }
-      CurrencyApiResponse response =
-          requireNonNull(
-              restTemplate.getForObject(
-                  BASE_URL_TO_EXCHANGE_RATE
-                      + "?source="
-                      + source.toUpperCase()
-                      + "&target="
-                      + target.toUpperCase(),
-                  CurrencyApiResponse.class));
-      if (response.getError() != null) {
-        throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
-      }
-      Exchange exchange =
-          Exchange.builder()
-              .source(source)
-              .target(target)
-              .amount(response.getRates().get(target))
-              .expirationDate(LocalDateTime.now().plusDays(30))
-              .build();
-      exchangeRepository.save(exchange);
-      return new ExchangeDto(source, target, exchange.getAmount());
     }
+    if (target.length() != 3) {
+      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+    }
+    CurrencyApiResponse response =
+        requireNonNull(
+            restTemplate.getForObject(
+                BASE_URL_TO_EXCHANGE_RATE
+                    + "?source="
+                    + source.toUpperCase()
+                    + "&target="
+                    + target.toUpperCase(),
+                CurrencyApiResponse.class));
+    if (response.getError() != null) {
+      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+    }
+    Exchange exchange =
+        Exchange.builder()
+            .source(source)
+            .target(target)
+            .amount(response.getRates().get(target))
+            .expirationDate(LocalDateTime.now().plusDays(30))
+            .build();
+    exchangeRepository.save(exchange);
+    return new ExchangeDto(source, target, exchange.getAmount());
   }
 }
