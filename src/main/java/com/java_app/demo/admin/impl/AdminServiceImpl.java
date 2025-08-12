@@ -42,10 +42,10 @@ public class AdminServiceImpl implements AdminService {
   @Transactional
   public String updateUserAsAdmin(String userEmail, String userRole)
       throws NotFoundException {
-    if (userEmail.isEmpty() || userRole.isEmpty() || !userRepository.existsByEmail(userEmail)) {
+    if (!userRepository.existsByEmail(userEmail)) {
       log.info(
           "The Admin tried to update the user with the following email {}, but failed.", userEmail);
-      throw new NotFoundException("User not found with the following email: " + userEmail);
+      throw new NotFoundException(String.format("User not found with the following email: %s", userEmail));
     }
     CustomUser user = userRepository.findCustomUserByEmail(userEmail);
 
@@ -64,7 +64,7 @@ public class AdminServiceImpl implements AdminService {
   public String deleteUserAsAdmin(Integer id) throws NotFoundException {
     if (!userRepository.existsById(id)) {
       log.info("The Admin tried to delete the user with the following id: {}", id);
-      throw new NotFoundException("User not found with the following id: " + id);
+      throw new NotFoundException(String.format("User not found with the following id: %s", id));
     }
     userRepository.deleteCustomUserById(id);
     log.info("The Admin deleted the user with the following id: {}", id);
@@ -78,7 +78,7 @@ public class AdminServiceImpl implements AdminService {
             .findCustomUserById(userId)
             .orElseThrow(
                 () ->
-                    new NotFoundException("User not found with the following id: " + userId));
+                    new NotFoundException(String.format("User not found with the following id: %s", userId)));
     return keysRepository.findAllByCustomUser(user).stream()
         .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
         .collect(Collectors.toList());
@@ -97,7 +97,7 @@ public class AdminServiceImpl implements AdminService {
             .findById(id)
             .orElseThrow(
                 () ->
-                    new NotFoundException("ApiKey not found with the following id: " + id));
+                    new NotFoundException(String.format("ApiKey not found with the following id: %s", id)));
     keysRepository.delete(key);
     log.info("The Admin deleted the Apikey with the following id: {}", id);
     return "User's keys deleted successfully";
@@ -107,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
   public String updateUserKey(Integer id, String name, Integer UserId)
       throws NotFoundException {
     if(!keysRepository.existsApiKeyByCustomUser_Id(UserId)){
-      throw new NotFoundException("User not found with the following id: " + UserId);
+      throw new NotFoundException(String.format("User not found with the following id: %s", UserId));
     }
     if (!keysRepository.existsById(id)) {
       log.info(

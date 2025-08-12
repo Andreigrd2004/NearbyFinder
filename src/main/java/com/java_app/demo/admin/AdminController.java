@@ -29,7 +29,7 @@ public class AdminController {
   }
 
   @PutMapping("/users")
-  public String updateUser(@Email @RequestParam String userEmail, @NotBlank @RequestParam String userRole) {
+  public String updateUser(@RequestParam @Email @NotBlank String userEmail, @NotBlank @RequestParam String userRole) {
     return adminService.updateUserAsAdmin(userEmail, userRole);
   }
 

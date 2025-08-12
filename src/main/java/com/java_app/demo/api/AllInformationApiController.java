@@ -1,5 +1,6 @@
 package com.java_app.demo.api;
 
+import com.java_app.demo.admin.annotation.Ip;
 import com.java_app.demo.currency.dto.ExchangeDto;
 import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.news.dto.NewsDto;
@@ -21,18 +22,18 @@ public class AllInformationApiController {
   private final InformationRetriever informationRetriever;
 
   @GetMapping("/location")
-  public LocationDto getLocation(@RequestParam("ip") @NotBlank String ip) {
+  public LocationDto getLocation(@RequestParam("ip") @Ip @NotBlank String ip) {
     return informationRetriever.getLocationByIp(ip);
   }
 
   @GetMapping("/news")
-  public List<NewsDto> getNews(@RequestParam("ip") @NotBlank String ip) {
+  public List<NewsDto> getNews(@RequestParam("ip") @Ip @NotBlank String ip) {
     return informationRetriever.getNewsForToday(ip);
   }
 
   @GetMapping("/exchangerate")
   public ExchangeDto getExchange(
-      @RequestParam("target") @NotBlank String target, @RequestParam("ip") @NotBlank String ip) {
+      @RequestParam("target") @NotBlank String target, @RequestParam("ip") @Ip @NotBlank String ip) {
     return informationRetriever.getExchangeRateFromSourceToTarget(ip, target);
   }
 }

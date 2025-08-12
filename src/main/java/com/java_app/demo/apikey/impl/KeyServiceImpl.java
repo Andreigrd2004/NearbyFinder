@@ -31,7 +31,7 @@ public class KeyServiceImpl implements KeyService {
   public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
       throw new BadRequestException(
-          "ApiKey already exists with the following name: " + keyName);
+              String.format("ApiKey already exists with the following name: %s", keyName));
     }
     ApiKey apiKey = new ApiKey(null, generateApiKey(), keyName, getAuthenticatedUser());
     keysRepository.save(apiKey);
@@ -50,7 +50,7 @@ public class KeyServiceImpl implements KeyService {
   @Transactional
   public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
-      throw new NotFoundException("ApiKey not found with the following name: " + keyName);
+      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.deleteByName(keyName);
 
@@ -60,8 +60,8 @@ public class KeyServiceImpl implements KeyService {
   @Override
   @Transactional
   public String update(String keyName, String newName) throws NotFoundException {
-    if (keyName.isEmpty() || newName.isEmpty() || !keysRepository.existsByName(keyName)) {
-      throw new NotFoundException("ApiKey not found with the following name: " + keyName);
+    if (!keysRepository.existsByName(keyName)) {
+      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.updateApiKey(keyName, newName);
     return "Successfully modified!";

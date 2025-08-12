@@ -7,7 +7,6 @@ import com.java_app.demo.advice.exceptions.InternalServerErrorException;
 import com.java_app.demo.currency.*;
 import com.java_app.demo.currency.dto.ExchangeDto;
 import com.java_app.demo.location.LocationService;
-import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -23,34 +22,37 @@ public class CurrencyServiceImpl implements CurrencyService {
   private final RestTemplate restTemplate;
   private final LocationService locationService;
 
-  public ExchangeDto getExchangeRate(String ip, @NotBlank String target)
+  public ExchangeDto getExchangeRate(String ip, String target)
       throws BadRequestException, InternalServerErrorException {
     String source = locationService.getUserLocationByIp(ip).getCurrency();
     Optional<Exchange> optionalExchange = exchangeRepository.findBySourceAndTarget(source, target);
     if (optionalExchange.isPresent()) {
-      if(LocalDateTime.now().isBefore(optionalExchange.get().getExpirationDate())){
+      if (LocalDateTime.now().isBefore(optionalExchange.get().getExpirationDate())) {
         Exchange result = optionalExchange.get();
         return new ExchangeDto(source, target, result.getAmount());
       }
       exchangeRepository.delete(optionalExchange.orElse(null));
     }
+
     if (target.length() != 3) {
       throw new BadRequestException("The request doesn't respect the 3 letters format.");
     }
-      CurrencyApiResponse response;
-      try{
-          response = requireNonNull(
-                  restTemplate.getForObject(
-                          BASE_URL_TO_EXCHANGE_RATE
-                                  + "?source="
-                                  + source.toUpperCase()
-                                  + "&target="
-                                  + target.toUpperCase(),
-                          CurrencyApiResponse.class));
-      } catch (Exception e) {
+    CurrencyApiResponse response;
+    try {
+      response =
+          requireNonNull(
+              restTemplate.getForObject(
+                  BASE_URL_TO_EXCHANGE_RATE
+                      + "?source="
+                      + source.toUpperCase()
+                      + "&target="
+                      + target.toUpperCase(),
+                  CurrencyApiResponse.class));
+    } catch (Exception e) {
       throw new InternalServerErrorException(
-              "An internal error occurred while trying to call the exchange rate API:"
-                      + e.getMessage());
+          String.format(
+              "An internal error occurred while trying to call the exchange rate API: %s",
+              e.getMessage()));
     }
     Exchange exchange =
         Exchange.builder()

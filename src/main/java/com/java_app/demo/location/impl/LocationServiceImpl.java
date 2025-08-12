@@ -29,7 +29,7 @@ public class LocationServiceImpl implements LocationService {
           BASE_URL_TO_LOCATION_API + ip + FIELDS_REQUIRED_AS_PARAMETERS, LocationDto.class);
     } catch (Exception e) {
       throw new InternalServerErrorException(
-              "An internal error occurred while trying to call the location API:");
+              "An internal error occurred while trying to call the location API.");
     }
   }
 }
