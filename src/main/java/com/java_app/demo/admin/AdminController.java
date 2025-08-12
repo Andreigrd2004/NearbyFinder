@@ -7,6 +7,7 @@ import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,23 +35,23 @@ public class AdminController {
   }
 
   @DeleteMapping("/users")
-  public String deleteUser(@RequestParam @NotBlank Integer userId) {
+  public String deleteUser(@RequestParam @NotNull Integer userId) {
     return adminService.deleteUserAsAdmin(userId);
   }
 
   @GetMapping("/keys")
-  public List<KeyDto> getKeys(@RequestParam @NotBlank Integer userId) {
+  public List<KeyDto> getKeys(@RequestParam @NotNull Integer userId) {
     return adminService.getAllUserKeys(userId);
   }
 
   @DeleteMapping("/keys")
-  public String deleteKey(@RequestParam @NotBlank Integer KeyId) {
-    return adminService.deleteKeyAsAdmin(KeyId);
+  public String deleteKey(@RequestParam @NotNull Integer keyId) {
+    return adminService.deleteKeyAsAdmin(keyId);
   }
 
   @PutMapping("/keys")
   public String updateKey(
-          @RequestParam @NotBlank Integer KeyId, @RequestParam @NotBlank String name, @RequestParam @NotBlank Integer userId) {
-    return adminService.updateUserKey(KeyId, name, userId);
+          @RequestParam @NotNull Integer keyId, @RequestParam @NotBlank String name, @RequestParam @NotNull Integer userId) {
+    return adminService.updateUserKey(keyId, name, userId);
   }
 }

@@ -3,6 +3,7 @@ package com.java_app.demo.controller;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.java_app.demo.admin.AdminController;
@@ -74,7 +75,7 @@ public class AdminControllerTest {
                 .content(String.valueOf(user)))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string("User registered successfully"));
+        .andExpect(content().string("User registered successfully"));
   }
 
   @Test
@@ -108,7 +109,7 @@ public class AdminControllerTest {
                 .param("user_id", String.valueOf(userId)))
         .andDo(print())
         .andExpect(status().isOk())
-        .andExpect(MockMvcResultMatchers.content().string("User deleted successfully"));
+        .andExpect(content().string("User deleted successfully"));
     verify(adminService, times(1)).deleteUserAsAdmin(userId);
   }
 
@@ -146,5 +147,119 @@ public class AdminControllerTest {
         .andDo(print())
         .andExpect(status().isOk());
     verify(adminService, times(1)).updateUserKey(id, name, user_id);
+  }
+
+  @Test
+  public void testUpdateUserEmailParam_Blank_ReturnsBadRequest() throws Exception {
+    String role = "ADMIN";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/users")
+                .with(csrf())
+                .param("userEmail", "   ")
+                .param("userRole", role))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json("{\"userEmail\":\"Invalid email format\"}"));
+  }
+
+  @Test
+  public void testUpdateUserEmailParam_NotEmailFormat_ReturnsBadRequest() throws Exception {
+    String role = "ADMIN";
+    String email = "a-wadnajwb";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/users")
+                .with(csrf())
+                .param("userEmail", email)
+                .param("userRole", role))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testUpdateUserRole_Blank_ReturnsBadRequest() throws Exception {
+    String role = "";
+    String email = "a@email.com";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/users")
+                .with(csrf())
+                .param("userEmail", email)
+                .param("userRole", role))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(content().json("{\"userRole\":\"must not be blank\"}"));
+  }
+
+  @Test
+  public void testDeleteUserId_Null_ReturnsBadRequest() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete("/admin/users").with(csrf()))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetKeysUserId_Null_ReturnsBadRequest() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/admin/keys").with(csrf()))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testDeleteKeysUserId_Null_ReturnsBadRequest() throws Exception {
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete("/admin/keys").with(csrf()))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testUpdateKeyByUserIdNameKeyId_NullKeyId_ReturnsBadRequest() throws Exception {
+    String name = "awndj";
+    String userId = "1";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/keys")
+                .with(csrf())
+                .param("userId", userId)
+                .param("name", name))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testUpdateKeyByUserIdNameKeyId_NullUserId_ReturnsBadRequest() throws Exception {
+    String name = "awndj";
+    String keyId = "1";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/keys")
+                .with(csrf())
+                .param("keyId", keyId)
+                .param("name", name))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testUpdateKeyByUserIdNameKeyId_nameBlank_ReturnsBadRequest() throws Exception {
+    String name = "";
+    String keyId = "1";
+    String userId = "1";
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.put("/admin/keys")
+                .with(csrf())
+                .param("keyId", keyId)
+                .param("name", name)
+                .param("userId", userId))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 }
