@@ -4,7 +4,7 @@ import static com.java_app.demo.location.impl.LocationServiceImpl.BASE_URL_TO_LO
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.java_app.demo.location.LocationDto;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.impl.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

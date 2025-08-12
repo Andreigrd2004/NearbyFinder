@@ -2,7 +2,7 @@ package com.java_app.demo.location.impl;
 
 import com.java_app.demo.advice.exceptions.BadRequestException;
 import com.java_app.demo.advice.exceptions.InternalServerErrorException;
-import com.java_app.demo.location.LocationDto;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.InetAddressValidator;

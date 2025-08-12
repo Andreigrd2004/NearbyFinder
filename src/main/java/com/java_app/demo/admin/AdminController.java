@@ -4,12 +4,17 @@ import com.java_app.demo.apikey.model.KeyDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.dtos.UserDto;
 import java.util.List;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/admin")
+@Validated
 public class AdminController {
   AdminService adminService;
 
@@ -24,28 +29,28 @@ public class AdminController {
   }
 
   @PutMapping("/users")
-  public String updateUser(@RequestParam String userEmail, @RequestParam String userRole) {
+  public String updateUser(@Email @RequestParam String userEmail, @NotBlank @RequestParam String userRole) {
     return adminService.updateUserAsAdmin(userEmail, userRole);
   }
 
   @DeleteMapping("/users")
-  public String deleteUser(@RequestParam Integer user_id) {
+  public String deleteUser(@RequestParam @NotBlank Integer user_id) {
     return adminService.deleteUserAsAdmin(user_id);
   }
 
   @GetMapping("/keys")
-  public List<KeyDto> getKeys(@RequestParam Integer user_id) {
+  public List<KeyDto> getKeys(@RequestParam @NotBlank Integer user_id) {
     return adminService.getAllUserKeys(user_id);
   }
 
   @DeleteMapping("/keys")
-  public String deleteKey(@RequestParam Integer key_id) {
+  public String deleteKey(@RequestParam @NotBlank Integer key_id) {
     return adminService.deleteKeyAsAdmin(key_id);
   }
 
   @PutMapping("/keys")
   public String updateKey(
-      @RequestParam Integer key_id, @RequestParam String name, @RequestParam Integer user_id) {
+          @RequestParam @NotBlank Integer key_id, @RequestParam @NotBlank String name, @RequestParam @NotBlank Integer user_id) {
     return adminService.updateUserKey(key_id, name, user_id);
   }
 }
