@@ -1,8 +1,9 @@
 package com.java_app.demo.user.dtos;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
-
 import lombok.*;
 
 @Getter
@@ -11,15 +12,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDto {
-  private Integer id;
+  @NotBlank private Integer id;
 
-  private String email;
+  @Email private String email;
 
-  private String username;
+  @NotBlank private String username;
 
   private Boolean enabled;
 
   private Boolean accountNonExpired;
 
-  private Set<String> roles = new HashSet<>();
+  @NotBlank private Set<String> roles = new HashSet<>();
 }
