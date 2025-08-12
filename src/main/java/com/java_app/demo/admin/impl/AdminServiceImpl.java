@@ -53,9 +53,7 @@ public class AdminServiceImpl implements AdminService {
     user.addRole("ROLE_" + userRole);
     userRepository.save(user);
 
-    log.info(
-        "Admin updated this user: {}",
-        user.getUsername() + " with the following email and role: " + userEmail + ", " + userRole);
+    log.info("Admin updated this user {} with the following email and role: {}, {}", user.getUsername(), userEmail, userRole);
     return "Updated successfully";
   }
 
@@ -113,10 +111,10 @@ public class AdminServiceImpl implements AdminService {
       log.info(
           "The Admin tried to update the key with the following {}, but failed because was not found.",
           name);
-      throw new NotFoundException("ApiKey not found with the following id: " + id);
+      throw new NotFoundException(String.format("ApiKey not found with the following id: %s", id));
     }
     ApiKey key = keysRepository.findApiKeyById(id);
-    log.info("Admin updated this ApiKey: {}", key.getName() + " with the following name: " + name);
+    log.info("Admin updated this ApiKey: {} with the following name: {}", key.getName(), name);
     key.setName(name);
     keysRepository.save(key);
 
