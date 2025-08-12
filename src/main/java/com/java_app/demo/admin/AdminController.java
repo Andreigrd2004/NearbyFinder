@@ -34,23 +34,23 @@ public class AdminController {
   }
 
   @DeleteMapping("/users")
-  public String deleteUser(@RequestParam @NotBlank Integer user_id) {
-    return adminService.deleteUserAsAdmin(user_id);
+  public String deleteUser(@RequestParam @NotBlank Integer UserId) {
+    return adminService.deleteUserAsAdmin(UserId);
   }
 
   @GetMapping("/keys")
-  public List<KeyDto> getKeys(@RequestParam @NotBlank Integer user_id) {
-    return adminService.getAllUserKeys(user_id);
+  public List<KeyDto> getKeys(@RequestParam @NotBlank Integer UserId) {
+    return adminService.getAllUserKeys(UserId);
   }
 
   @DeleteMapping("/keys")
-  public String deleteKey(@RequestParam @NotBlank Integer key_id) {
-    return adminService.deleteKeyAsAdmin(key_id);
+  public String deleteKey(@RequestParam @NotBlank Integer KeyId) {
+    return adminService.deleteKeyAsAdmin(KeyId);
   }
 
   @PutMapping("/keys")
   public String updateKey(
-          @RequestParam @NotBlank Integer key_id, @RequestParam @NotBlank String name, @RequestParam @NotBlank Integer user_id) {
-    return adminService.updateUserKey(key_id, name, user_id);
+          @RequestParam @NotBlank Integer KeyId, @RequestParam @NotBlank String name, @RequestParam @NotBlank Integer UserId) {
+    return adminService.updateUserKey(KeyId, name, UserId);
   }
 }
