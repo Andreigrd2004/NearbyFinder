@@ -104,7 +104,7 @@ public class AdminServiceImpl implements AdminService {
   @Override
   public String updateUserKey(Integer id, String name, Integer UserId)
       throws NotFoundException {
-    if(!keysRepository.existsApiKeyByCustomUser_Id(UserId)){
+    if(!keysRepository.existsApiKeyByCustomUserId(UserId)){
       throw new NotFoundException(String.format("User not found with the following id: %s", UserId));
     }
     if (!keysRepository.existsById(id)) {

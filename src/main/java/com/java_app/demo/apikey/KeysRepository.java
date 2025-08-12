@@ -35,7 +35,7 @@ public interface KeysRepository extends JpaRepository<ApiKey, Integer> {
   @Query(value = "UPDATE ApiKey k SET k.name = :newName WHERE k.name = :name")
   void updateApiKey(@Param("name") String apiKeyName, @Param("newName") String newName);
 
-  boolean existsApiKeyByCustomUser_Id(Integer userId);
+  boolean existsApiKeyByCustomUserId(Integer userId);
 
   List<ApiKey> findCustomUserKeysById(Integer id, Limit limit);
 }
