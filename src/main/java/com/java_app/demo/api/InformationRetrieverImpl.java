@@ -2,7 +2,7 @@ package com.java_app.demo.api;
 
 import com.java_app.demo.currency.CurrencyService;
 import com.java_app.demo.currency.dto.ExchangeDto;
-import com.java_app.demo.location.dto.LocationDto;
+import com.java_app.demo.location.dto.KeyDto;
 import com.java_app.demo.location.LocationService;
 import com.java_app.demo.news.NewsService;
 import com.java_app.demo.news.dto.NewsDto;
@@ -18,7 +18,7 @@ public class InformationRetrieverImpl implements InformationRetriever {
   private final NewsService newsService;
 
   @Override
-  public LocationDto getLocationByIp(String ip) {
+  public KeyDto getLocationByIp(String ip) {
     return locationService.getUserLocationByIp(ip);
   }
 

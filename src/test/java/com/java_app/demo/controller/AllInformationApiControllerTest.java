@@ -38,8 +38,87 @@ public class AllInformationApiControllerTest {
   }
 
   @Test
+  public void testGetLocation_InvalidIpFormat_ShouldReturnBadRequest() throws Exception {
+    String ip = " 1. 1. 1. 1";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetLocation_InvalidIpNotIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "test";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetLocation_ValidIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "85.186.22.132";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  public void testGetLocation_Invalid_ShouldReturnBadRequest() throws Exception {
+    String ip = " 1.1.1.1 ";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetLocation_EmptyIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetLocation_NullIp_ShouldReturnBadRequest() throws Exception {
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/location").with(csrf()))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
   public void testGetNews_BlankIp_ShouldReturnBadRequest() throws Exception {
     String ip = " ";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/news").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetNews_EmptyIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "";
+
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/users/news").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetNews_NullIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "";
 
     mockMvc
         .perform(MockMvcRequestBuilders.get("/users/news").with(csrf()).param("ip", ip))
@@ -63,11 +142,67 @@ public class AllInformationApiControllerTest {
   }
 
   @Test
-  public void testGetExchange_BlankTarget_ShouldReturnBadRequest() throws Exception {
+  public void testGetExchange_EmptyIp_ShouldReturnBadRequest() throws Exception {
+    String ip = "";
+    String target = "target";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/users/exchangerate")
+                .with(csrf())
+                .param("ip", ip)
+                .param("target", target))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetExchange_NullIp_ShouldReturnBadRequest() throws Exception {
+    String target = "target";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/users/exchangerate").with(csrf()).param("target", target))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetExchange_EmptyTarget_ShouldReturnBadRequest() throws Exception {
+    String ip = "85.186.22.132";
+    String target = "";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/users/exchangerate")
+                .with(csrf())
+                .param("ip", ip)
+                .param("target", target))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetExchange_NullTarget_ShouldReturnBadRequest() throws Exception {
     String ip = "85.186.22.132";
 
     mockMvc
         .perform(MockMvcRequestBuilders.get("/users/exchangerate").with(csrf()).param("ip", ip))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void testGetExchange_BlankTarget_ShouldReturnBadRequest() throws Exception {
+    String ip = "85.186.22.132";
+    String target = "  ";
+
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get("/users/exchangerate")
+                .with(csrf())
+                .param("ip", ip)
+                .param("target", target))
         .andDo(print())
         .andExpect(status().isBadRequest());
   }

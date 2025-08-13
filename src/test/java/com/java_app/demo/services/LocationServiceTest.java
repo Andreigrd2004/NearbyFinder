@@ -4,7 +4,7 @@ import static com.java_app.demo.location.impl.LocationServiceImpl.BASE_URL_TO_LO
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.java_app.demo.location.dto.LocationDto;
+import com.java_app.demo.location.dto.KeyDto;
 import com.java_app.demo.location.impl.LocationServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,16 +27,16 @@ public class LocationServiceTest {
 
     String ip = "8.8.8.8";
 
-    LocationDto mockLocation = new LocationDto();
+    KeyDto mockLocation = new KeyDto();
     mockLocation.setCountry("United States");
     mockLocation.setCity("Mountain View");
     when(restTemplate.getForObject(
-            BASE_URL_TO_LOCATION_API + ip + FIELDS_REQUIRED_AS_PARAMETERS, LocationDto.class))
+            BASE_URL_TO_LOCATION_API + ip + FIELDS_REQUIRED_AS_PARAMETERS, KeyDto.class))
         .thenReturn(mockLocation);
 
-    LocationDto response = countryService.getUserLocationByIp(ip);
+    KeyDto response = countryService.getUserLocationByIp(ip);
 
-    assertInstanceOf(LocationDto.class, response);
+    assertInstanceOf(KeyDto.class, response);
     assertEquals("United States", response.getCountry());
     assertEquals("Mountain View", response.getCity());
   }
