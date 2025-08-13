@@ -3,6 +3,7 @@ package com.java_app.demo.authentication;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +19,12 @@ public class AuthController {
   AuthService authService;
 
   @PostMapping("/login")
-  public JwtAuthResponse login(@RequestBody LoginDto loginDto) {
+  public JwtAuthResponse login(@Valid @RequestBody LoginDto loginDto) {
     return authService.login(loginDto);
   }
 
   @PostMapping("/register")
-  public String register(@RequestBody RegisterDto registerDto) {
+  public String register(@Valid @RequestBody RegisterDto registerDto) {
     return authService.register(registerDto);
   }
 }
