@@ -5,6 +5,7 @@ import lombok.*;
 @Getter
 @Setter
 @RequiredArgsConstructor
+@Builder
 public class ErrorResponse {
 
     private final int statusCode;

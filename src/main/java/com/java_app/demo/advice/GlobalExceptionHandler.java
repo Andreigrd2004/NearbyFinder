@@ -5,10 +5,9 @@ import com.java_app.demo.advice.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -36,29 +35,36 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<Map<String, String>> handleConstraintViolation(
-      ConstraintViolationException ex) {
-    Map<String, String> errors = new HashMap<>();
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public List<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex) {
+    List<ErrorResponse> errors = new ArrayList<>();
     for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
       String fieldName = violation.getPropertyPath().toString();
       String errorMessage = violation.getMessage();
-      errors.put(fieldName.substring(fieldName.lastIndexOf('.') + 1), errorMessage);
+      errors.add(
+          new ErrorResponse(
+              HttpStatus.BAD_REQUEST.value(),
+              String.format(
+                  "%s: %s", fieldName.substring(fieldName.lastIndexOf('.') + 1), errorMessage)));
     }
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    return errors;
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidationExceptions(
-      MethodArgumentNotValidException ex) {
-    Map<String, String> errors = new HashMap<>();
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public List<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    List<ErrorResponse> errors = new ArrayList<>();
     ex.getBindingResult()
         .getAllErrors()
         .forEach(
             (error) -> {
               String fieldName = ((FieldError) error).getField();
               String errorMessage = error.getDefaultMessage();
-              errors.put(fieldName, errorMessage);
+              errors.add(
+                  new ErrorResponse(
+                      HttpStatus.BAD_REQUEST.value(),
+                      String.format("%s: %s", fieldName, errorMessage)));
             });
-    return ResponseEntity.badRequest().body(errors);
+    return errors;
   }
 }
