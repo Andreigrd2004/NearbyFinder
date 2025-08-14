@@ -1,18 +1,23 @@
 package com.java_app.demo.csv.Impl;
 
+import com.java_app.demo.advice.exceptions.BadRequestException;
 import com.java_app.demo.advice.exceptions.InternalServerErrorException;
+import com.java_app.demo.csv.CsvReader;
 import com.java_app.demo.csv.CsvService;
 import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.dtos.UserDto;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -46,6 +51,25 @@ public class CsvServiceImpl implements CsvService {
       log.error(e.getMessage());
       throw new InternalServerErrorException(
           "An internal error occurred when trying to write CSV file");
+    }
+  }
+
+  public Map<String, Boolean> getExistingUsersInFile(MultipartFile multipartFile) throws BadRequestException {
+    if(!CsvReader.hasCsvFormat(multipartFile)) {
+      throw new BadRequestException("CSV file has invalid format");
+    }
+
+    try {
+      List<String> extractedUsers = CsvReader.csvToStuList(multipartFile.getInputStream());
+      Map<String, Boolean> result = new HashMap<>();
+      for (String user : extractedUsers) {
+        Boolean UserExists = userRepository.existsByUsername(user);
+        result.put(user, UserExists);
+      }
+      return result;
+    }catch (IOException e) {
+      log.error(e.getMessage());
+      throw new BadRequestException("There was an error reading the CSV file");
     }
   }
 
