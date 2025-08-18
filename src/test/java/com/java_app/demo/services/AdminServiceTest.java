@@ -140,14 +140,14 @@ public class AdminServiceTest {
     Integer id = 1;
     Integer user_id = 1;
     when(keysRepository.existsById(id)).thenReturn(true);
-    when(keysRepository.existsApiKeyByCustomUser_Id(user_id)).thenReturn(true);
+    when(keysRepository.existsApiKeyByCustomUserId(user_id)).thenReturn(true);
     when(keysRepository.findApiKeyById(id)).thenReturn(apiKey);
 
     String response = adminService.updateUserKey(id, name, user_id);
 
     assertEquals("Updated successfully", response);
     verify(keysRepository, times(1)).existsById(id);
-    verify(keysRepository, times(1)).existsApiKeyByCustomUser_Id(user_id);
+    verify(keysRepository, times(1)).existsApiKeyByCustomUserId(user_id);
   }
 
   @Test

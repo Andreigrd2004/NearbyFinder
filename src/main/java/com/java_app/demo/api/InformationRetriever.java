@@ -1,7 +1,7 @@
 package com.java_app.demo.api;
 
 import com.java_app.demo.currency.dto.ExchangeDto;
-import com.java_app.demo.location.LocationDto;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.news.dto.NewsDto;
 import java.util.List;
 

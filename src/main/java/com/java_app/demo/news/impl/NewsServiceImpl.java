@@ -2,17 +2,16 @@ package com.java_app.demo.news.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.java_app.demo.advice.exceptions.InternalServerErrorException;
 import com.java_app.demo.location.CountryRepository;
-import com.java_app.demo.location.LocationDto;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.LocationService;
 import com.java_app.demo.news.NewsApiResponse;
 import com.java_app.demo.news.NewsService;
 import com.java_app.demo.news.dto.NewsDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -24,7 +23,7 @@ public class NewsServiceImpl implements NewsService {
   private final LocationService locationService;
   private final RestTemplate restTemplate;
 
-  public List<NewsDto> getNewspaper(String ip) throws HttpClientErrorException {
+  public List<NewsDto> getNewspaper(String ip) throws InternalServerErrorException {
     String country_code = countryRepository.findCountryByName(getLocationCountryName(ip)).getCode();
     NewsApiResponse news =
         requireNonNull(
@@ -32,11 +31,12 @@ public class NewsServiceImpl implements NewsService {
                 BASE_URL_TO_NEWS_API
                     + "country="
                     + country_code.toLowerCase()
-                    + "&apikey="
+                        + "&apikey="
                     + API_KEY,
                 NewsApiResponse.class));
     if (news.getStatus().equals("error")) {
-      throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new InternalServerErrorException(
+          "An internal error occurred while trying to call the news API.");
     }
 
     return news.getResults();

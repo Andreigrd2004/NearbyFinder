@@ -1,5 +1,6 @@
 package com.java_app.demo.authentication;
 
+import com.java_app.demo.advice.exceptions.BadRequestException;
 import com.java_app.demo.authentication.dtos.LoginDto;
 import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.security.jwt.JwtAuthResponse;
@@ -8,14 +9,12 @@ import com.java_app.demo.user.CustomUser;
 import com.java_app.demo.user.UserRepository;
 import com.java_app.demo.user.mapper.RegisterMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -44,9 +43,10 @@ public class AuthServiceImpl implements AuthService {
     return jwtAuthResponse;
   }
 
-  public String register(RegisterDto registerDto) throws HttpClientErrorException {
+  public String register(RegisterDto registerDto) throws BadRequestException {
     if (userRepository.existsByUsername(registerDto.getUsername())) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(
+          "The user with the following username already exists.");
     }
     CustomUser user = RegisterMapper.map(registerDto, passwordEncoder);
 

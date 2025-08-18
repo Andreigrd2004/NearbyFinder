@@ -1,6 +1,7 @@
 package com.java_app.demo.authentication.dtos;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +14,8 @@ import lombok.Setter;
 public class LoginDto {
 
   @NotBlank
-  private String Username;
+  private String username;
+
+  @Size(min = 4, max = 20)
   private String password;
 }

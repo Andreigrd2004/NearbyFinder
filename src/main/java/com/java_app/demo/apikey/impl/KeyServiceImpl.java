@@ -1,6 +1,8 @@
 package com.java_app.demo.apikey.impl;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import com.java_app.demo.advice.exceptions.BadRequestException;
+import com.java_app.demo.advice.exceptions.NotFoundException;
 import com.java_app.demo.apikey.KeyService;
 import com.java_app.demo.apikey.KeysRepository;
 import com.java_app.demo.apikey.model.ApiKey;
@@ -13,10 +15,8 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 @AllArgsConstructor
@@ -28,9 +28,10 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String createApiKey(String keyName) throws HttpClientErrorException {
+  public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+      throw new BadRequestException(
+              String.format("ApiKey already exists with the following name: %s", keyName));
     }
     ApiKey apiKey = new ApiKey(null, generateApiKey(), keyName, getAuthenticatedUser());
     keysRepository.save(apiKey);
@@ -47,9 +48,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String delete(String keyName) throws HttpClientErrorException {
+  public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
-      throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.deleteByName(keyName);
 
@@ -58,9 +59,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  public String update(String keyName, String newName) throws HttpClientErrorException {
-    if (keyName.isEmpty() && newName.isEmpty() && !keysRepository.existsByName(keyName)) {
-      throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+  public String update(String keyName, String newName) throws NotFoundException {
+    if (!keysRepository.existsByName(keyName)) {
+      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.updateApiKey(keyName, newName);
     return "Successfully modified!";

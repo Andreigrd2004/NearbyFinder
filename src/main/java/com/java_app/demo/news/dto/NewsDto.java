@@ -1,10 +1,17 @@
 package com.java_app.demo.news.dto;
 
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
 public class NewsDto {
-    private String title;
-    private String content;
-    private String link;
+  @NotBlank private String title;
+
+  @NotBlank private String content;
+
+  @NotBlank private String link;
 }
