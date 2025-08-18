@@ -1,6 +1,6 @@
 package com.java_app.demo.dtos;
 
-import com.java_app.demo.location.dto.KeyDto;
+import com.java_app.demo.location.dto.LocationDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -29,17 +29,17 @@ class LocationDtoTest {
     @ParameterizedTest(name = "Field ''{2}'' should be invalid with value: ''{1}''")
     @MethodSource("invalidFieldProvider")
     void whenFieldIsInvalid_thenValidationFails(
-            BiConsumer<KeyDto, String> fieldSetter, String invalidValue, String fieldName) {
+            BiConsumer<LocationDto, String> fieldSetter, String invalidValue, String fieldName) {
 
-        KeyDto dto = getValidDto();
+        LocationDto dto = getValidDto();
 
         fieldSetter.accept(dto, invalidValue);
 
-        Set<ConstraintViolation<KeyDto>> violations = validator.validate(dto);
+        Set<ConstraintViolation<LocationDto>> violations = validator.validate(dto);
 
         assertThat(violations).hasSize(1);
 
-        ConstraintViolation<KeyDto> violation = violations.iterator().next();
+        ConstraintViolation<LocationDto> violation = violations.iterator().next();
         assertThat(violation.getPropertyPath().toString()).isEqualTo(fieldName);
         assertThat(violation.getMessage()).isEqualTo("must not be blank");
     }
@@ -50,21 +50,21 @@ class LocationDtoTest {
 
 
         return invalidValues.flatMap(value -> Stream.of(
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setQuery, value, "query"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setStatus, value, "status"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setCountry, value, "country"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setRegionName, value, "regionName"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setCity, value, "city"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setZip, value, "zip"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setLat, value, "lat"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setLon, value, "lon"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setIsp, value, "isp"),
-                Arguments.of((BiConsumer<KeyDto, String>) KeyDto::setCurrency, value, "currency")
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setQuery, value, "query"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setStatus, value, "status"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setCountry, value, "country"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setRegionName, value, "regionName"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setCity, value, "city"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setZip, value, "zip"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setLat, value, "lat"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setLon, value, "lon"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setIsp, value, "isp"),
+                Arguments.of((BiConsumer<LocationDto, String>) LocationDto::setCurrency, value, "currency")
         ));
     }
 
-    private KeyDto getValidDto() {
-        return new KeyDto(
+    private LocationDto getValidDto() {
+        return new LocationDto(
                 "85.186.22.132",
                 "success",
                 "Romania",

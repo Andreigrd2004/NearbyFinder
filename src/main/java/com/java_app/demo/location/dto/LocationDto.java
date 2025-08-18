@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class KeyDto {
+public class LocationDto {
 
   @NotBlank private String query;
   @NotBlank private String status;

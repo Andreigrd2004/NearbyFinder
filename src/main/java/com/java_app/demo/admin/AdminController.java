@@ -5,6 +5,7 @@ import com.java_app.demo.authentication.dtos.RegisterDto;
 import com.java_app.demo.user.dtos.UserDto;
 import java.util.List;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ public class AdminController {
   }
 
   @PostMapping("/users")
-  public String addUser(RegisterDto registerDto) {
+  public String addUser(@RequestBody @Valid RegisterDto registerDto) {
     return adminService.createUser(registerDto);
   }
 

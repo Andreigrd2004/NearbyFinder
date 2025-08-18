@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.java_app.demo.advice.exceptions.InternalServerErrorException;
 import com.java_app.demo.location.CountryRepository;
-import com.java_app.demo.location.dto.KeyDto;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.LocationService;
 import com.java_app.demo.news.NewsApiResponse;
 import com.java_app.demo.news.NewsService;
@@ -43,7 +43,7 @@ public class NewsServiceImpl implements NewsService {
   }
 
   public String getLocationCountryName(String ip) {
-    KeyDto locationDto = locationService.getUserLocationByIp(ip);
+    LocationDto locationDto = locationService.getUserLocationByIp(ip);
     return locationDto.getCountry();
   }
 }

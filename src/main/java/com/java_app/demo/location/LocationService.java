@@ -1,8 +1,8 @@
 package com.java_app.demo.location;
 
-import com.java_app.demo.location.dto.KeyDto;
+import com.java_app.demo.location.dto.LocationDto;
 
 public interface LocationService {
 
-  KeyDto getUserLocationByIp(String ip);
+  LocationDto getUserLocationByIp(String ip);
 }
