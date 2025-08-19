@@ -14,9 +14,7 @@ services:
   db:
     image: postgres
     container_name: db
-    environment:
-      - POSTGRES_USER=myuser
-      - POSTGRES_PASSWORD=mysecretpassword
-      - POSTGRES_DB=myuser
+    env_file:
+      - docker.env
     ports:
       - "5432:5432"
