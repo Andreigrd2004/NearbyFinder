@@ -5,7 +5,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import com.java_app.demo.security.apikey.ApiKeyFilter;
 import com.java_app.demo.security.jwt.JwtAuthenticationEntryPoint;
 import com.java_app.demo.security.jwt.JwtAuthenticationFilter;
-
 import java.time.Duration;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -100,15 +99,19 @@ public class SecurityConfig {
     source.registerCorsConfiguration("/**", configuration);
     return source;
   }
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofMinutes(5))
-                .disableCachingNullValues()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
 
-        return RedisCacheManager.builder(redisConnectionFactory)
-                .cacheDefaults(redisCacheConfiguration)
-                .build();
-    }
+  @Bean
+  public CacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
+    RedisCacheConfiguration redisCacheConfiguration =
+        RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(5))
+            .disableCachingNullValues()
+            .serializeValuesWith(
+                RedisSerializationContext.SerializationPair.fromSerializer(
+                    new GenericJackson2JsonRedisSerializer()));
+
+    return RedisCacheManager.builder(redisConnectionFactory)
+        .cacheDefaults(redisCacheConfiguration)
+        .build();
+  }
 }

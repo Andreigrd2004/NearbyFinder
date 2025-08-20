@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class AdminServiceImpl implements AdminService {
   @Override
   @Cacheable(value = "all_users")
   public List<UserDto> getAllUsers() {
-    List<UserDto> users =
+      List<UserDto> users =
         userRepository.getAllUsers().stream()
             .map(UserMapper.INSTANCE::UserToUserDto)
             .collect(Collectors.toList());
@@ -45,9 +44,7 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  @Caching(
-      evict = {@CacheEvict(value = "all_users", allEntries = true)},
-      put = {@CachePut(value = "users", key = "#userEmail")})
+  @Caching(evict = {@CacheEvict(value = "all_users", allEntries = true)})
   public String updateUserAsAdmin(String userEmail, String userRole) throws NotFoundException {
     if (!userRepository.existsByEmail(userEmail)) {
       log.info(
@@ -73,18 +70,18 @@ public class AdminServiceImpl implements AdminService {
   @Transactional
   @Caching(
       evict = {
-        @CacheEvict(value = "users", key = "#UserId"),
+        @CacheEvict(value = "users", key = "#userId"),
         @CacheEvict(value = "all_users"),
-        @CacheEvict(value = "keys", key = "#UserId")
+        @CacheEvict(value = "keys", key = "#userId")
       })
-  public String deleteUserAsAdmin(Integer UserId) throws NotFoundException {
-    if (!userRepository.existsById(UserId)) {
-      log.info("The Admin tried to delete the user with the following id: {}", UserId);
+  public String deleteUserAsAdmin(Integer userId) throws NotFoundException {
+    if (!userRepository.existsById(userId)) {
+      log.info("The Admin tried to delete the user with the following id: {}", userId);
       throw new NotFoundException(
-          String.format("User not found with the following id: %s", UserId));
+          String.format("User not found with the following id: %s", userId));
     }
-    userRepository.deleteCustomUserById(UserId);
-    log.info("The Admin deleted the user with the following id: {}", UserId);
+    userRepository.deleteCustomUserById(userId);
+    log.info("The Admin deleted the user with the following id: {}", userId);
     return "User deleted successfully";
   }
 
@@ -128,7 +125,7 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
-  @Caching(evict = {@CacheEvict(value = "keys", key="#userId")})
+  @Caching(evict = {@CacheEvict(value = "keys", key = "#userId")})
   public String updateUserKey(Integer id, String name, Integer userId) throws NotFoundException {
     if (!keysRepository.existsApiKeyByCustomUserId(userId)) {
       throw new NotFoundException(

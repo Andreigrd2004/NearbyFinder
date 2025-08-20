@@ -2,8 +2,8 @@ package com.java_app.demo.api;
 
 import com.java_app.demo.currency.CurrencyService;
 import com.java_app.demo.currency.dto.ExchangeDto;
-import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.LocationService;
+import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.news.NewsService;
 import com.java_app.demo.news.dto.NewsDto;
 import java.util.List;
@@ -31,8 +31,13 @@ public class InformationRetrieverImpl implements InformationRetriever {
   }
 
   @Override
-  @Cacheable(value = "rates", key = "#ip")
+  @Cacheable(value = "rates", key = "#root.target.getExchangeRateKeyCacheName(#ip, #target)")
   public ExchangeDto getExchangeRateFromSourceToTarget(String ip, String target) {
     return currencyService.getExchangeRate(ip, target);
+  }
+
+  public String getExchangeRateKeyCacheName(String ip, String target) {
+    String sourceCurrency = locationService.getUserLocationByIp(ip).getCurrency();
+    return sourceCurrency + target;
   }
 }

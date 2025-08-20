@@ -32,7 +32,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  @Caching(evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")}, cacheable = {@Cacheable(value = "key", key = "#root.target.getAuthenticatedUser().id")})
+  @Caching(
+      evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")},
+      cacheable = {@Cacheable(value = "key", key = "#root.target.getAuthenticatedUser().id")})
   public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
       throw new BadRequestException(
@@ -57,7 +59,7 @@ public class KeyServiceImpl implements KeyService {
   @Caching(
       evict = {
         @CacheEvict(value = "keys", allEntries = true),
-        @CacheEvict(value = "key", allEntries = true)
+        @CacheEvict(value = "key", key = "#root.target.getAuthenticatedUser().id")
       })
   public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
@@ -71,7 +73,9 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
-  @Caching(evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")}, put = {@CachePut(value = "key", key = "#keyName")})
+  @Caching(
+      evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")},
+      put = {@CachePut(value = "key", key = "#keyName")})
   public String update(String keyName, String newName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
       throw new NotFoundException(
