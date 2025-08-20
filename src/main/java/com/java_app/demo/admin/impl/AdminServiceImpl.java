@@ -1,3 +1,4 @@
+
 package com.java_app.demo.admin.impl;
 
 import com.java_app.demo.admin.AdminService;
@@ -17,6 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,6 +34,7 @@ public class AdminServiceImpl implements AdminService {
   private final AuthService authService;
 
   @Override
+  @Cacheable(value = "all_users")
   public List<UserDto> getAllUsers() {
     List<UserDto> users =
         userRepository.getAllUsers().stream()
@@ -40,6 +46,7 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
+  @Caching(evict = {@CacheEvict(value="all_users", allEntries = true)}, put = {@CachePut(value = "users", key = "#userEmail")})
   public String updateUserAsAdmin(String userEmail, String userRole) throws NotFoundException {
     if (!userRepository.existsByEmail(userEmail)) {
       log.info(
@@ -63,17 +70,20 @@ public class AdminServiceImpl implements AdminService {
 
   @Override
   @Transactional
-  public String deleteUserAsAdmin(Integer id) throws NotFoundException {
-    if (!userRepository.existsById(id)) {
-      log.info("The Admin tried to delete the user with the following id: {}", id);
-      throw new NotFoundException(String.format("User not found with the following id: %s", id));
+  @Caching(evict = {@CacheEvict(value = "users", key = "#UserId"), @CacheEvict(value = "all_users"), @CacheEvict(value = "keys", key = "#UserId")})
+
+  public String deleteUserAsAdmin(Integer UserId) throws NotFoundException {
+    if (!userRepository.existsById(UserId)) {
+      log.info("The Admin tried to delete the user with the following id: {}", UserId);
+      throw new NotFoundException(String.format("User not found with the following id: %s", UserId));
     }
-    userRepository.deleteCustomUserById(id);
-    log.info("The Admin deleted the user with the following id: {}", id);
+    userRepository.deleteCustomUserById(UserId);
+    log.info("The Admin deleted the user with the following id: {}", UserId);
     return "User deleted successfully";
   }
 
   @Override
+  @Cacheable(value = "keys", key = "#userId")
   public List<KeyDto> getAllUserKeys(Integer userId) throws NotFoundException {
     CustomUser user =
         userRepository
@@ -88,12 +98,14 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
+  @Caching(evict = {@CacheEvict("all_users")}, cacheable = {@Cacheable(value = "users", key = "#registerDto.email")})
   public String createUser(RegisterDto registerDto) {
     return authService.register(registerDto);
   }
 
   @Override
   @Transactional
+  @Caching(evict = {@CacheEvict("keys")})
   public String deleteKeyAsAdmin(Integer id) throws NotFoundException {
     ApiKey key =
         keysRepository
@@ -108,6 +120,7 @@ public class AdminServiceImpl implements AdminService {
   }
 
   @Override
+  @Caching(evict = {@CacheEvict("keys")})
   public String updateUserKey(Integer id, String name, Integer userId) throws NotFoundException {
     if (!keysRepository.existsApiKeyByCustomUserId(userId)) {
       throw new NotFoundException(

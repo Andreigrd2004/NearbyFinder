@@ -15,6 +15,9 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+
   public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
       throw new BadRequestException(
@@ -40,6 +44,7 @@ public class KeyServiceImpl implements KeyService {
   }
 
   @Override
+  @Cacheable("keys")
   public List<KeyDto> getCurrentUserApiKeys() {
     return keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
         .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
@@ -48,6 +53,7 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+  @Caching(evict = {@CacheEvict(value = "keys", allEntries = true), @CacheEvict(value = "key", allEntries = true)})
   public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
       throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
@@ -59,6 +65,7 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+  @Caching(evict = {@CacheEvict(value = "keys", allEntries = true)})
   public String update(String keyName, String newName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
       throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));

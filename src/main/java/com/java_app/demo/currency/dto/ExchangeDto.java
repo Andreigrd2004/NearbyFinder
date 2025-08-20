@@ -3,11 +3,13 @@ package com.java_app.demo.currency.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExchangeDto {
+public class ExchangeDto implements Serializable {
     @NotBlank
     private String source;
 

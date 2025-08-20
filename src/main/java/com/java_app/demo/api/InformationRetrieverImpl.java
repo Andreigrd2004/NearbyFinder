@@ -8,6 +8,7 @@ import com.java_app.demo.news.NewsService;
 import com.java_app.demo.news.dto.NewsDto;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,16 +19,19 @@ public class InformationRetrieverImpl implements InformationRetriever {
   private final NewsService newsService;
 
   @Override
+  @Cacheable(value = "locations", key = "#ip")
   public LocationDto getLocationByIp(String ip) {
     return locationService.getUserLocationByIp(ip);
   }
 
   @Override
+  @Cacheable(value = "news", key = "#ip")
   public List<NewsDto> getNewsForToday(String ip) {
     return newsService.getNewspaper(ip);
   }
 
   @Override
+  @Cacheable(value = "rates", key = "#ip")
   public ExchangeDto getExchangeRateFromSourceToTarget(String ip, String target) {
     return currencyService.getExchangeRate(ip, target);
   }
