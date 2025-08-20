@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +32,13 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+  @Caching(
+      evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")},
+      cacheable = {@Cacheable(value = "key", key = "#root.target.getAuthenticatedUser().id")})
   public String createApiKey(String keyName) throws BadRequestException {
     if (keysRepository.existsByNameAndCustomUser(keyName, getAuthenticatedUser())) {
       throw new BadRequestException(
-              String.format("ApiKey already exists with the following name: %s", keyName));
+          String.format("ApiKey already exists with the following name: %s", keyName));
     }
     ApiKey apiKey = new ApiKey(null, generateApiKey(), keyName, getAuthenticatedUser());
     keysRepository.save(apiKey);
@@ -40,6 +47,7 @@ public class KeyServiceImpl implements KeyService {
   }
 
   @Override
+  @Cacheable(value = "keys", key = "#root.target.getAuthenticatedUser().id")
   public List<KeyDto> getCurrentUserApiKeys() {
     return keysRepository.findByCustomUser(getAuthenticatedUser()).stream()
         .map(KeyMapper.INSTANCE::apiKeyToKeyDto)
@@ -48,9 +56,15 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+  @Caching(
+      evict = {
+        @CacheEvict(value = "keys", allEntries = true),
+        @CacheEvict(value = "key", key = "#root.target.getAuthenticatedUser().id")
+      })
   public String delete(String keyName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
-      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
+      throw new NotFoundException(
+          String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.deleteByName(keyName);
 
@@ -59,9 +73,13 @@ public class KeyServiceImpl implements KeyService {
 
   @Override
   @Transactional
+  @Caching(
+      evict = {@CacheEvict(value = "keys", key = "#root.target.getAuthenticatedUser().id")},
+      put = {@CachePut(value = "key", key = "#keyName")})
   public String update(String keyName, String newName) throws NotFoundException {
     if (!keysRepository.existsByName(keyName)) {
-      throw new NotFoundException(String.format("ApiKey not found with the following name: %s", keyName));
+      throw new NotFoundException(
+          String.format("ApiKey not found with the following name: %s", keyName));
     }
     keysRepository.updateApiKey(keyName, newName);
     return "Successfully modified!";

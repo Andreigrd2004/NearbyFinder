@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationDto {
+public class LocationDto implements Serializable {
 
   @NotBlank private String query;
   @NotBlank private String status;

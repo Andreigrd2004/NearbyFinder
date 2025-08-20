@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @AllArgsConstructor
-public class NewsDto {
+public class NewsDto implements Serializable {
   @NotBlank private String title;
 
   @NotBlank private String content;

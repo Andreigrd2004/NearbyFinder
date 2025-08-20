@@ -6,6 +6,7 @@ import com.java_app.demo.location.dto.LocationDto;
 import com.java_app.demo.location.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.validator.routines.InetAddressValidator;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,6 +20,7 @@ public class LocationServiceImpl implements LocationService {
   private final RestTemplate restTemplate;
 
   @Override
+  @Cacheable(value = "locations", key = "#ip")
   public LocationDto getUserLocationByIp(String ip) throws BadRequestException {
     if (!InetAddressValidator.getInstance().isValid(ip)) {
       throw new BadRequestException(
